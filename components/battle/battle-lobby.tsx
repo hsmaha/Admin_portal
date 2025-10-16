@@ -50,18 +50,16 @@ export function BattleLobby({ battleState, onStartBattle, onCancel }: BattleLobb
 
   return (
     <div className="max-w-4xl mx-auto">
-      
-
       <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center">
         <div className="md:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Quiz will be starting in</CardTitle>
+              <CardTitle>Are you Ready?</CardTitle>
               </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-6 flex items-center p-4 xl:p-6 xl:pt-0">
                 <Button onClick={onStartBattle} disabled={!allReady && countdown > 0}>
-                {countdown > 0 ? ` ${countdown}s` : "Start"}
+                {countdown > 0 ? `Quiz will be starting in ${countdown}s` : "Start"}
               </Button>
               </div>
 

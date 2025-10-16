@@ -17,117 +17,149 @@ import { QuizEditor } from "./quiz-editor";
 // Mock quiz data array with 20 quizzes
 
 export function QuizGenerator() {
-  const [topic, setTopic] = useState("");
-  const [difficulty, setDifficulty] = useState("medium");
-  const [questionCount, setQuestionCount] = useState("5");
+  const [fullname, setfullname] = useState("");
+  const [instaacc, setinstaacc] = useState("");
+  const [phone, setphone] = useState("");
+  const [email, setemail] = useState("");
+  const [city, setcity] = useState("");
+  const [lasteducation, setlasteducation] = useState("");
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
   const [generatedQuizzes, setGeneratedQuizzes] = useState<Quiz[]>([]);
 
   const handleGenerate = () => {
-    if (!topic) return;
+    if (!fullname) return;
 
     setIsGenerating(true);
 
     // Simulate API call with timeout
     setTimeout(() => {
-      // Select 5 random quizzes from the mockQuizzes array
-      const shuffled = [...mockQuizzes].sort(() => 0.5 - Math.random());
-      const selected = shuffled.slice(0, 5);
+    //   // Select 5 random quizzes from the mockQuizzes array
+    //   const shuffled = [...mockQuizzes].sort(() => 0.5 - Math.random());
+    //   const selected = shuffled.slice(0, 5);
 
-      // Update the topic of the selected quizzes based on user input
-      const customizedQuizzes = selected.map((quiz, index) => ({
-        ...quiz,
-        id: index + 1,
-        title: `${topic} - ${quiz.title}`,
-        tags: [...quiz.tags, topic.toLowerCase()],
-        settings: {
-          timeLimit: 0,
-          randomizeQuestions: false,
-          showExplanations: true,
-          passingScore: 70,
-          visibility: "private",
-          allowRetakes: true,
-          questionTimer: 0,
-        },
-      }));
+    //   // Update the topic of the selected quizzes based on user input
+    //   const customizedQuizzes = selected.map((quiz, index) => ({
+    //     ...quiz,
+    //     id: index + 1,
+    //     title: `${topic} - ${quiz.title}`,
+    //     tags: [...quiz.tags, topic.toLowerCase()],
+    //     settings: {
+    //       timeLimit: 0,
+    //       randomizeQuestions: false,
+    //       showExplanations: true,
+    //       passingScore: 70,
+    //       visibility: "private",
+    //       allowRetakes: true,
+    //       questionTimer: 0,
+    //     },
+    //   }));
 
-      setGeneratedQuizzes(customizedQuizzes);
+    //   setGeneratedQuizzes(customizedQuizzes);
       setIsGenerating(false);
       setIsGenerated(true);
     }, 2000);
   };
 
   return (
-    <div className="space-y-6">
-      <Tabs defaultValue="generator" className="w-full">
+    <div className="space-y-4">
+       <div className="grid md:grid-cols-3 items-center text-center">
+                <div className="space-y-4"></div>
+      {/* <Tabs defaultValue="generator" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="generator">AI Generator</TabsTrigger>
           <TabsTrigger value="editor" disabled={!isGenerated}>
             Edit Generated Quiz
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="generator" className="space-y-6 pt-4">
+        <TabsContent value="generator" className="space-y-6 pt-4"> */}
+         <div className="space-y-4 justify-self-center">
           <Card>
             <CardHeader>
-              <CardTitle>AI Quiz Generator</CardTitle>
+              <CardTitle className="text-center">Get Register Yourself for Minute to Win it Challenge!</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="topic">Quiz Topic</Label>
-                <Input id="topic" placeholder="e.g., World History, Space Exploration, etc." value={topic} onChange={(e) => setTopic(e.target.value)} />
+             
+                <div className="space-y-2 text-left">
+                <Label htmlFor="fullname">Full Name</Label>
+                <Input id="fullname" placeholder="Enter Your Full Name" value={fullname} onChange={(e) => setfullname(e.target.value)} />
               </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="difficulty">Difficulty Level</Label>
-                  <Select value={difficulty} onValueChange={setDifficulty}>
-                    <SelectTrigger id="difficulty">
-                      <SelectValue placeholder="Select difficulty" />
+            
+            
+                <div className="space-y-2 text-left">
+                <Label htmlFor="phone">Number</Label>
+                <Input id="phone" placeholder="Enter First Name" value={phone} onChange={(e) => setphone(e.target.value)} />
+              </div>
+                <div className="space-y-2 text-left">
+                  <Label htmlFor="email">Email</Label>
+                <Input id="email" placeholder="Enter Email" value={email} onChange={(e) => setemail(e.target.value)} />
+                </div>
+           
+             
+                <div className="space-y-2 text-left">
+                  <Label htmlFor="city">City</Label>
+                  <Select value={city} onValueChange={setcity}>
+                    <SelectTrigger id="city">
+                      <SelectValue placeholder="Select city" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="easy">Easy</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="hard">Hard</SelectItem>
+                      <SelectItem value="3">Karachi</SelectItem>
+                      <SelectItem value="2">Lahore</SelectItem>
+                      <SelectItem value="1">Islamabad</SelectItem>
+                      <SelectItem value="6">Faislabad</SelectItem>
+                      <SelectItem value="7">Gujranwala</SelectItem>
+                      <SelectItem value="8">Sheikhupura</SelectItem>
+                      <SelectItem value="9">Sialkot</SelectItem>
+                      <SelectItem value="10">Hyderabad</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="question-count">Number of Questions</Label>
-                  <Select value={questionCount} onValueChange={setQuestionCount}>
+                <div className="space-y-2 text-left">
+                  <Label htmlFor="lasteducation">Last Education Qualification</Label>
+                <Input id="lasteducation" placeholder="Enter Last Qualification" value={lasteducation} onChange={(e) => setlasteducation(e.target.value)} />
+
+                  {/* <Select value={questionCount} onValueChange={setQuestionCount}>
                     <SelectTrigger id="question-count">
-                      <SelectValue placeholder="Select count" />
+                    <SelectValue placeholder="Select count" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="5">5 Questions</SelectItem>
-                      <SelectItem value="10">10 Questions</SelectItem>
-                      <SelectItem value="15">15 Questions</SelectItem>
-                      <SelectItem value="20">20 Questions</SelectItem>
+                    <SelectItem value="5">5 Questions</SelectItem>
+                    <SelectItem value="10">10 Questions</SelectItem>
+                    <SelectItem value="15">15 Questions</SelectItem>
+                    <SelectItem value="20">20 Questions</SelectItem>
                     </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                    </Select> */}
 
-              <div className="space-y-2">
+                </div>
+                    <div className="space-y-2 text-left">
+                      <Label htmlFor="instaacc">Your Instagram Handle/Your Instagram Username</Label>
+                    <Input id="instaacc" placeholder='i.e _abcuser_, abcxyz' value={instaacc} onChange={(e) => setinstaacc(e.target.value)} />
+                    </div>
+            
+
+              {/* <div className="space-y-2">
                 <Label htmlFor="additional-info">Additional Information (Optional)</Label>
                 <Textarea id="additional-info" placeholder="Any specific requirements or focus areas for the quiz" />
-              </div>
+                </div> */}
             </CardContent>
             <CardFooter>
-              <Button onClick={handleGenerate} disabled={!topic || isGenerating} className="w-full">
+              <Button onClick={handleGenerate} disabled={!fullname || isGenerating} className="w-full">
                 {isGenerating ? (
                   <>Generating Quiz...</>
                 ) : (
                   <>
-                    <Sparkles className="mr-2 h-4 w-4" /> Generate Quiz
+                    <Sparkles className="mr-2 h-4 w-4" /> Submit
                   </>
                 )}
               </Button>
             </CardFooter>
           </Card>
-
-          {isGenerated && (
+                </div>
+                 <div className="space-y-4"></div>
+                </div>
+          {/* {isGenerated && (
             <div className="rounded-lg border bg-muted/50 p-4">
               <h3 className="mb-2 text-lg font-medium">Quiz Generated Successfully!</h3>
               <p className="text-muted-foreground">
@@ -156,11 +188,11 @@ export function QuizGenerator() {
                 </div>
               </div>
             </div>
-          )}
-        </TabsContent>
+          )} */}
+        {/* </TabsContent> */}
 
-        <TabsContent value="editor">{isGenerated && <QuizEditor initialQuizzes={generatedQuizzes} />}</TabsContent>
-      </Tabs>
+        {/* <TabsContent value="editor">{isGenerated && <QuizEditor initialQuizzes={generatedQuizzes} />}</TabsContent>*/}
+      {/* </Tabs>  */}
     </div>
   );
 }

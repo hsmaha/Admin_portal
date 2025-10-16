@@ -6,18 +6,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { BattleState } from "./battle-page";
 
 interface ActiveBattleProps {
   battleState: BattleState;
-  onBattleComplete: ({ score, correctAnswers }: { score: number; correctAnswers: number }) => void;
+  onBattleComplete: ({
+    score,
+    correctAnswers,
+    totalTimeTaken,
+  }: {
+    score: number;
+    correctAnswers: number;
+    totalTimeTaken: number;
+  }) => void;
+  questions: any[];
 }
 
 interface Question {
   id: number;
   text: string;
   options: string[];
+  correct_answer: string;
 }
 
 interface Player {
@@ -56,6 +66,7 @@ const createInitialState = (battleState: BattleState): GameState => ({
   showFeedback: false,
   playerRankings: battleState.players,
   answers: [],
+  
 });
 
 // Reducer function
@@ -118,49 +129,30 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
   }
 };
 
-export function ActiveBattle({ battleState, onBattleComplete }: ActiveBattleProps) {
+export function ActiveBattle({ battleState, onBattleComplete, questions }: ActiveBattleProps) {
   const [state, dispatch] = useReducer(gameReducer, battleState, createInitialState);
 
-  // Mock questions
-  const questions: Question[] = [
-    {
-      id: 1,
-      text: "What is the capital city of Australia?",
-      options: ["London", "Canberra", "Paris", "Madrid"],
-      
-    },
-    {
-      id: 2,
-      text: "In which country is the tallest twin tower ‘Petronas’ located? ",
-      options: ["Malaysia", "Dubai", "Berlin", "Australia"],
-      
-    },
-    {
-      id: 3,
-      text: "In which state are both Harvard University and MIT located?",
-      options: ["Massachusetts", "Wellington", "Yale University", "Ontario"],
-      
-    },
-    {
-      id: 4,
-      text: "What is the capital city of New Zealand?",
-      options: ["Ontario", "Canberra", "Wellington", "Brazil"],
-      
-    },
-    {
-      id: 5,
-      text: "Which famous US university is located in New Haven, Connecticut?",
-      options: ["Yale University", "Deakin University", "Wollongong University", "Curtin University"],
-      
-    },
-    {
-      id: 6,
-      text: "What is the currency of Malaysia called?",
-      options: ["Malaysian Ringgit", "Statue of Liberty", "Irish", "One World Trade Center"],
-      
-    },
-   
-  ];
+
+// const [questions, setQuestions] = useState<Question[]>([]);
+// const [isLoading, setIsLoading] = useState(true);
+// const [error, setError] = useState<string | null>(null);
+
+// useEffect(() => {
+//   const fetchQuestions = async () => {
+//     try {
+//       const response = await fetch("http://127.0.0.1:8000/api/get-question"); 
+//       const data = await response.json();
+//       setQuestions(data.data); 
+//     } catch (err) {
+//       console.error("Error fetching questions:", err);
+//       setError("Failed to load questions");
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   fetchQuestions();
+// }, []);
 
   // Timer effect
   useEffect(() => {
@@ -195,27 +187,52 @@ export function ActiveBattle({ battleState, onBattleComplete }: ActiveBattleProp
     return () => clearInterval(interval);
   }, [state.playerRankings]);
 
+useEffect(() => {
+  if (state.answers.length === questions.length) {
+    const totalTimeTaken = state.answers.reduce(
+      (sum, ans) => sum + ans.timeTaken,
+      0
+    );
+
+    console.log("✅ All answers with time taken:", state.answers);
+    console.log("⏱️ Total time taken:", totalTimeTaken, "seconds");
+
+    onBattleComplete({
+      score: state.score,
+      correctAnswers: 0,
+      totalTimeTaken,
+    });
+  }
+}, [state.answers]);
+
   const handleAnswerSelect = (index: number) => {
     dispatch({ type: "SELECT_ANSWER", payload: index });
   };
 
 const handleAnswerSubmit = (index: number | null) => {
-  dispatch({ type: "SUBMIT_ANSWER", payload: { answerIndex: index, correctAnswer: 0, timeLeft: 0, timePerQuestion: battleState.timePerQuestion} });
+  const currentQ = questions[state.currentQuestion];
+  const correctAnswerIndex = currentQ.options.indexOf(currentQ.correct_answer);
+
+  dispatch({
+    type: "SUBMIT_ANSWER",
+    payload: {
+      answerIndex: index,
+      correctAnswer: correctAnswerIndex,
+      timeLeft: state.timeLeft,
+      timePerQuestion: battleState.timePerQuestion,
+    },
+  });
 
   if (state.currentQuestion < questions.length - 1) {
     dispatch({
       type: "NEXT_QUESTION",
       payload: { timePerQuestion: battleState.timePerQuestion },
     });
-  } else {
-    console.log("All answers with time taken:", state.answers);
-    onBattleComplete({
-      score: state.score,
-      correctAnswers: 0,
-    });
   }
 };
 
+  
+  if (questions.length === 0) return <div>No questions found.</div>;
   const currentQ = questions[state.currentQuestion];
   const progress = (state.currentQuestion / questions.length) * 100;
 
@@ -257,16 +274,22 @@ const handleAnswerSubmit = (index: number | null) => {
 
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="text-xl font-bold mb-6">{currentQ.text}</div>
+         <div className="text-xl font-bold mb-6">{currentQ.text}</div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {currentQ.options.map((option, index) => (
-              <Button key={index} variant={state.selectedAnswer === index ? "default" : "outline"}  onClick={() => handleAnswerSelect(index)}>
-                <div className="flex items-center w-full">
-                  <div className="mr-3 h-6 w-6 rounded-full border flex items-center justify-center">{String.fromCharCode(65 + index)}</div>
-                  <span>{option}</span>
-               </div>
-              </Button>
-            ))}
+            {currentQ.options.map((option: string, index: number) => (
+                  <Button
+                    key={index}
+                    variant={state.selectedAnswer === index ? "default" : "outline"}
+                    onClick={() => handleAnswerSelect(index)}
+                  >
+                    <div className="flex items-center w-full">
+                      <div className="mr-3 h-6 w-6 rounded-full border flex items-center justify-center">
+                        {String.fromCharCode(65 + index)}
+                      </div>
+                      <span>{option}</span>
+                    </div>
+                  </Button>
+                ))}
           </div>
         </CardContent>
       </Card>

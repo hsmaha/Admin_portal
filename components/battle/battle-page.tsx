@@ -37,6 +37,8 @@ export interface Player {
 
 export function BattlePage() {
   const [stage, setStage] = useState<BattleStage>("selection");
+  const [questions, setQuestions] = useState([]);
+
   const [battleState, setBattleState] = useState<BattleState>({
     mode: "1v1",
     type: "public",
@@ -120,9 +122,27 @@ export function BattlePage() {
     setStage("lobby");
   };
 
-  const handleStartBattle = () => {
-    setStage("active");
-  };
+  // const handleStartBattle = () => {
+    // setStage("active");
+    const handleStartBattle = async () => {
+  try {
+    // 👇 Call your Laravel API endpoint
+    const res = await fetch("http://127.0.0.1:8000/api/admin/get-quiz");
+    const data = await res.json();
+    
+     if (data && Array.isArray(data.data) && data.data.length > 0) {
+      setQuestions(data.data);  
+      setStage("active");       
+    } else {
+      alert("Could not load quiz questions. Please try again.");
+    }
+   
+  } catch (error) {
+    console.error("Error fetching questions:", error);
+    alert("Network error while fetching quiz questions.");
+  }
+};
+  // };
 
   const handleBattleComplete = () => {
     // Update battle state with results
@@ -163,7 +183,7 @@ export function BattlePage() {
 
       {stage === "lobby" && <BattleLobby battleState={battleState} onStartBattle={handleStartBattle} onCancel={handleReturnHome} />}
 
-      {stage === "active" && <ActiveBattle battleState={battleState} onBattleComplete={handleBattleComplete} />}
+      {stage === "active" && <ActiveBattle battleState={battleState} onBattleComplete={handleBattleComplete} questions={questions}/>}
 
       {stage === "results" && <BattleResults battleState={battleState} onRematch={handleRematch} onReturnHome={handleReturnHome} />}
     </div>
