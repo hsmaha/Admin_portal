@@ -240,12 +240,12 @@ const handleAnswerSubmit = (index: number | null) => {
     <div className="max-w-4xl mx-auto">
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
-          <div className="text-sm font-medium">
+          <div className="text-sm font-medium text-black">
             Question {state.currentQuestion + 1} of {questions.length}
           </div>
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-orange-500" />
-            <span className="font-bold">{state.timeLeft}s</span>
+            <span className="font-bold text-black">{state.timeLeft}s</span>
           </div>
         </div>
         <Progress value={progress} className="h-2" />

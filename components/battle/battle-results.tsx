@@ -98,7 +98,33 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
 
       <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center">
         <div className="md:col-span-2">
-          <Card>
+          <div className="flex flex-col items-center justify-center text-center p-4 bg-[#0b0b16] text-white shadow-lg rounded-xl border border-gray-800 max-w mx-auto">
+    <div className="mb-4 mt-8">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-16 w-16 text-purple-400 mx-auto"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+        >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z" />
+      </svg>
+    </div>
+    <h2 className="text-2xl font-semibold text-purple-400 mb-12">
+      Thank you for participating!
+    </h2>
+    
+      <p className="text-gray-300 mb-6 mr-4 ml-4 max-w">Your submission has been successfully recorded. Do not forget to <span className="text-orange-300">Tag 3 of your friends</span> on the post and ask them to follow us back. Results will be announced shortly via your registered email address, so please keep an eye on your inbox!
+    </p>
+    {/* <button
+      disabled
+      className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium py-3 px-6 rounded-lg opacity-80 cursor-not-allowed"
+      >
+      Response Recorded
+      </button> */}
+  </div>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Thank you for participating!</CardTitle>
               <CardDescription>{battleState.mode === "1v1" ? "Your submission has been successfully recorded. Results will be announced shortly via your registered email address." : `All ${battleState.players.length} players ranked by score`}</CardDescription>
@@ -107,7 +133,7 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
               
             </CardContent>
            
-          </Card>
+          </Card> */}
         </div>
 
         

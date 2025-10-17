@@ -50,9 +50,9 @@ export function BattleLobby({ battleState, onStartBattle, onCancel }: BattleLobb
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center ">
         <div className="md:col-span-2">
-          <Card>
+          <Card className="p-6">
             <CardHeader>
               <CardTitle>Are you Ready?</CardTitle>
               </CardHeader>

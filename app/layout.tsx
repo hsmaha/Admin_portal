@@ -10,8 +10,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Quiz Making Website - Play & Earn Money",
-  description: "Create quizzes, play games, and earn money with our multi-vendor quiz platform",
+  title: "HS Consultant (PVT) LTD | Quiz Challenge",
+  description: "Study Abroad Consultants, Study with scholarships | HS Consultant (PVT) LTD",
 };
 
 export default function RootLayout({

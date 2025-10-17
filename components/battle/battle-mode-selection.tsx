@@ -41,11 +41,11 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
        
 
         <TabsContent value="1v1" className="space-y-6">
-          <Card>
+          <Card className="p-6">
             <CardHeader>
               <CardTitle>Welcome to the Minute to Win it competition by HS Consultants (Pvt) Ltd.
-</CardTitle>
-              <CardDescription>We appreciate you for taking this challenge and wish you all the best. Before your proceed please read the Game Rules below:</CardDescription>
+            </CardTitle>
+              <CardDescription className="text-center">We appreciate you for taking this challenge and wish you all the best. Before your proceed please read the Game Rules below:</CardDescription>
             </CardHeader>
 
              <Card>

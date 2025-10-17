@@ -178,14 +178,24 @@ export function BattlePage() {
   };
 
   return (
-    <div className="container mx-auto ">
+    <div
+  className="h-screen flex bg-cover bg-center bg-no-repeat overflow-hidden p-8"
+  style={{
+    backgroundImage: "url('/images/1.jpg')", // adjust path
+    // backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundBlendMode: "overlay", // makes form text readable
+    
+  }}>
+    <div className="container mx-auto">
       {stage === "selection" && <BattleModeSelection onModeSelect={handleModeSelect} />}
 
       {stage === "lobby" && <BattleLobby battleState={battleState} onStartBattle={handleStartBattle} onCancel={handleReturnHome} />}
 
       {stage === "active" && <ActiveBattle battleState={battleState} onBattleComplete={handleBattleComplete} questions={questions}/>}
+      
 
       {stage === "results" && <BattleResults battleState={battleState} onRematch={handleRematch} onReturnHome={handleReturnHome} />}
+  </div>
     </div>
   );
 }
