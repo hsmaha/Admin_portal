@@ -33,14 +33,7 @@ export function QuizGenerator() {
   };
 
   return (
-   
-    <div
-  className="h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden"
-  style={{
-    backgroundImage: "url('/images/1.jpg')", // adjust path
-    // backgroundColor: "rgba(0,0,0,0.5)",
-    backgroundBlendMode: "overlay",
-  }}>
+  
     <div className="space-y-4">
       <div className="grid md:grid-cols-3 items-center text-center">
         <div className="space-y-4"></div>
@@ -174,6 +167,5 @@ export function QuizGenerator() {
         <div className="space-y-4"></div>
       </div>
     </div>
-  </div>
   );
 }

@@ -15,8 +15,18 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       </div> */}
       {/* <div className={cn(collapsed ? "xl:w-[calc(100%-70px)]" : "xl:w-[calc(100%-250px)]", "w-full")}> */}
         {/* <Header /> */}
-        <main className="flex-1 overflow-auto ">{children}</main>
-      {/* </div> */}
-    </div>
+        {/* <main className="flex-1 overflow-auto p-3 md:p-4 xxl:p-6">{children}</main> */}
+        <main className="flex-1 min-h-screen overflow-auto">
+                      <div
+                        className="min-h-screen flex bg-cover bg-center bg-no-repeat p-8"
+                        style={{
+                          backgroundImage: "url('/images/1.jpg')",
+                          backgroundBlendMode: "overlay",
+                        }}>{children}
+                          {/* </div> */}
+                        </div>
+        </main>
+   </div>
+
   );
 }

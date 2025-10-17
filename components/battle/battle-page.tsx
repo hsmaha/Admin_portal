@@ -127,7 +127,7 @@ export function BattlePage() {
     const handleStartBattle = async () => {
   try {
     // 👇 Call your Laravel API endpoint
-    const res = await fetch("http://127.0.0.1:8000/api/admin/get-quiz");
+    const res = await fetch("https://www.hsconsultants.net/api/admin/get-quiz");
     const data = await res.json();
     
      if (data && Array.isArray(data.data) && data.data.length > 0) {
@@ -178,14 +178,7 @@ export function BattlePage() {
   };
 
   return (
-    <div
-  className="h-screen flex bg-cover bg-center bg-no-repeat overflow-hidden p-8"
-  style={{
-    backgroundImage: "url('/images/1.jpg')", // adjust path
-    // backgroundColor: "rgba(0,0,0,0.6)",
-    backgroundBlendMode: "overlay", // makes form text readable
     
-  }}>
     <div className="container mx-auto">
       {stage === "selection" && <BattleModeSelection onModeSelect={handleModeSelect} />}
 
@@ -196,6 +189,5 @@ export function BattlePage() {
 
       {stage === "results" && <BattleResults battleState={battleState} onRematch={handleRematch} onReturnHome={handleReturnHome} />}
   </div>
-    </div>
   );
 }
