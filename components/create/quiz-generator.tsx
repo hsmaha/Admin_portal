@@ -1,5 +1,13 @@
 "use client";
-
+type FormErrors = {
+  fullname?: string;
+  phone?: string;
+  email?: string;
+  city?: string;
+  lasteducation?: string;
+  institute?: string;
+  instaacc?: string;
+};
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,12 +24,31 @@ export function QuizGenerator() {
   const [email, setemail] = useState("");
   const [city, setcity] = useState("");
   const [lasteducation, setlasteducation] = useState("");
-
+  const [institute,setinstitute] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
+  const [errors, setErrors] =  useState<Record<string, string>>({});
+const validateForm = () => {
+const newErrors: Record<string, string> = {};
+
+  if (!fullname.trim()) newErrors.fullname = "Full name is required";
+  if (!phone.trim()) newErrors.phone = "Phone number is required";
+  else if (!/^[0-9]{10,15}$/.test(phone)) newErrors.phone = "Enter a valid phone number";
+
+  if (!email.trim()) newErrors.email = "Email is required";
+  else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Enter a valid email";
+
+  if (!city) newErrors.city = "Please select a city";
+  if (!lasteducation.trim()) newErrors.lasteducation = "Enter your last qualification";
+  if (!institute.trim()) newErrors.institute = "Enter your institute name";
+  if (!instaacc.trim()) newErrors.instaacc = "Enter your Instagram handle";
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const handleGenerate = () => {
-    if (!fullname) return;
+    if (!validateForm()) return;
 
     setIsGenerating(true);
 
@@ -52,18 +79,26 @@ export function QuizGenerator() {
                     id="fullname"
                     placeholder="Enter Your Full Name"
                     value={fullname}
-                    onChange={(e) => setfullname(e.target.value)}
+                    onChange={(e) => {setfullname(e.target.value);
+                      if (errors.fullname) setErrors({ ...errors, fullname: "" });}}
                     />
+                      {errors.fullname && (
+                      <p className="text-sm text-red-500 mt-1">{errors.fullname}</p>
+                    )}
+
                 </div>
 
                 <div className="space-y-2 text-left">
-                  <Label htmlFor="phone">Number</Label>
+                  <Label htmlFor="phone">Contact Number</Label>
                   <Input
                     id="phone"
                     placeholder="Enter Number"
                     value={phone}
-                    onChange={(e) => setphone(e.target.value)}
+                    onChange={(e) => { setphone(e.target.value); if (errors.phone) setErrors({ ...errors, phone: "" }); }}
                     />
+                     {errors.phone && (
+                      <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+                    )}
                 </div>
 
                 <div className="space-y-2 text-left">
@@ -72,13 +107,19 @@ export function QuizGenerator() {
                     id="email"
                     placeholder="Enter Email"
                     value={email}
-                    onChange={(e) => setemail(e.target.value)}
+                    onChange={(e) => { setemail(e.target.value); if (errors.email) setErrors({ ...errors, email: "" }); }}
                     />
+                     {errors.email && (
+                      <p className="text-sm text-red-500 mt-1">{errors.email}</p>
+                    )}
                 </div>
 
                 <div className="space-y-2 text-left">
                   <Label htmlFor="city">City</Label>
-                  <Select value={city} onValueChange={setcity}>
+                  <Select value={city} onValueChange={(value) => {
+                      setcity(value);
+                      if (errors.city) setErrors({ ...errors, city: "" });
+                    }}>
                     <SelectTrigger id="city">
                       <SelectValue placeholder="Select city" />
                     </SelectTrigger>
@@ -93,6 +134,9 @@ export function QuizGenerator() {
                       <SelectItem value="10">Hyderabad</SelectItem>
                     </SelectContent>
                   </Select>
+                   {errors.city && (
+                      <p className="text-sm text-red-500 mt-1">{errors.city}</p>
+                    )}
                 </div>
 
                 <div className="space-y-2 text-left">
@@ -101,8 +145,23 @@ export function QuizGenerator() {
                     id="lasteducation"
                     placeholder="Enter Last Qualification"
                     value={lasteducation}
-                    onChange={(e) => setlasteducation(e.target.value)}
+                    onChange={(e) => { setlasteducation(e.target.value); if (errors.lasteducation) setErrors({ ...errors, lasteducation: "" }); }}
                     />
+                     {errors.lasteducation && (
+                      <p className="text-sm text-red-500 mt-1">{errors.lasteducation}</p>
+                    )}
+                </div>
+                  <div className="space-y-2 text-left">
+                  <Label htmlFor="institute">Institute</Label>
+                  <Input
+                    id="institute"
+                    placeholder="Enter Institute"
+                    value={institute}
+                    onChange={(e) => { setinstitute(e.target.value); if (errors.institute) setErrors({ ...errors, institute: "" }); }}
+                    />
+                    {errors.institute && (
+                      <p className="text-sm text-red-500 mt-1">{errors.institute}</p>
+                    )}
                 </div>
 
                 <div className="space-y-2 text-left">
@@ -111,14 +170,17 @@ export function QuizGenerator() {
                     id="instaacc"
                     placeholder="i.e _abcuser_, abcxyz"
                     value={instaacc}
-                    onChange={(e) => setinstaacc(e.target.value)}
+                    onChange={(e) => { setinstaacc(e.target.value); if (errors.instaacc) setErrors({ ...errors, instaacc: "" }); }}
                     />
+                     {errors.instaacc && (
+                      <p className="text-sm text-red-500 mt-1">{errors.instaacc}</p>
+                    )}
                 </div>
               </CardContent>
               <CardFooter>
                 <Button
                   onClick={handleGenerate}
-                  disabled={!fullname || isGenerating}
+                  disabled={isGenerating}
                   className="w-full"
                   >
                   {isGenerating ? (

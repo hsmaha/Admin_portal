@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
 import { useEffect, useReducer, useState } from "react";
 import { BattleState } from "./battle-page";
+import axios from 'axios'
 
 interface ActiveBattleProps {
   battleState: BattleState;
@@ -53,7 +54,7 @@ interface GameState {
 }
 
 // Action types
-type GameAction = { type: "SELECT_ANSWER"; payload: number } | { type: "SUBMIT_ANSWER"; payload: { answerIndex: number | null; correctAnswer: number; timeLeft: number; timePerQuestion: number;  } } | { type: "NEXT_QUESTION"; payload: { timePerQuestion: number } } | { type: "TICK_TIMER" } | { type: "UPDATE_PLAYER_RANKINGS"; payload: Player[] } | { type: "RESET_FEEDBACK" };
+type GameAction = { type: "SELECT_ANSWER"; payload: number } | { type: "SUBMIT_ANSWER"; payload: {  questionId: number; answerIndex: number | null; correctAnswer: number; timeLeft: number; timePerQuestion: number;  } } | { type: "NEXT_QUESTION"; payload: { timePerQuestion: number } } | { type: "TICK_TIMER" } | { type: "UPDATE_PLAYER_RANKINGS"; payload: Player[] } | { type: "RESET_FEEDBACK" };
 
 // Initial state
 const createInitialState = (battleState: BattleState): GameState => ({
@@ -80,8 +81,8 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       };
 
    case "SUBMIT_ANSWER": {
-  const { answerIndex, timeLeft, timePerQuestion } = action.payload;
-  const currentQuestionId = state.currentQuestion + 1;
+  const { answerIndex, timeLeft, timePerQuestion,questionId } = action.payload;
+  // const currentQuestionId = state.currentQuestion + 1;
   const timeTaken = timePerQuestion - timeLeft;
 
   return {
@@ -89,7 +90,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
     selectedAnswer: answerIndex,
     answers: [
       ...state.answers,
-      { questionId: currentQuestionId, selectedAnswer: answerIndex, timeTaken },
+      { questionId, selectedAnswer: answerIndex, timeTaken },
     ],
   };
 }
@@ -131,30 +132,53 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 
 export function ActiveBattle({ battleState, onBattleComplete, questions }: ActiveBattleProps) {
   const [state, dispatch] = useReducer(gameReducer, battleState, createInitialState);
+const formatAnswersForDb = (answers: any[]) => {
+  const formatted: any = {};
+  answers.forEach((ans, index) => {
+    const i = index + 1;
+    formatted[`ques_${i}`] = ans.questionId;
+    formatted[`ans_${i}`] = ans.selectedAnswer;
+    formatted[`time_${i}`] = ans.timeTaken;
+  });
+  return formatted;
+};
+const storeResponse = async () => {
+  const payload = {
+    tokenQ: 'fxhxxfxf', // optional token
+    ...formatAnswersForDb(state.answers),
+  };
+axios
+  .post("https://www.hsconsultants.net/api/admin/save-answers", payload, {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  })
+  .then((response) => {
+    console.log("Saved successfully:", response.data);
+  })
+  .catch((error) => {
+    console.error("Error saving answers:", error.response?.data || error.message);
+  });
+  
+  // const res = await fetch("https://www.hsconsultants.net/api/admin/save-answers", {
+  //   method: "POST", // ✅ change to POST
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     "Accept": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     category_id: 1, // 👈 optional data you want to send
+  //     difficulty: "easy", // example payload
+  //   }),
+  // });
 
+  // const data = await res.json();
+  // console.log("ques", data);
+  
 
-// const [questions, setQuestions] = useState<Question[]>([]);
-// const [isLoading, setIsLoading] = useState(true);
-// const [error, setError] = useState<string | null>(null);
+}
 
-// useEffect(() => {
-//   const fetchQuestions = async () => {
-//     try {
-//       const response = await fetch("http://127.0.0.1:8000/api/get-question"); 
-//       const data = await response.json();
-//       setQuestions(data.data); 
-//     } catch (err) {
-//       console.error("Error fetching questions:", err);
-//       setError("Failed to load questions");
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
-
-//   fetchQuestions();
-// }, []);
-
-  // Timer effect
   useEffect(() => {
     if (state.timeLeft > 0 && !state.showFeedback) {
       const timer = setTimeout(() => {
@@ -196,8 +220,8 @@ useEffect(() => {
 
     console.log("✅ All answers with time taken:", state.answers);
     console.log("⏱️ Total time taken:", totalTimeTaken, "seconds");
-
-    onBattleComplete({
+    storeResponse();
+      onBattleComplete({
       score: state.score,
       correctAnswers: 0,
       totalTimeTaken,
@@ -220,6 +244,7 @@ const handleAnswerSubmit = (index: number | null) => {
       correctAnswer: correctAnswerIndex,
       timeLeft: state.timeLeft,
       timePerQuestion: battleState.timePerQuestion,
+      questionId: currentQ.id,
     },
   });
 

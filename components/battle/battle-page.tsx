@@ -123,12 +123,13 @@ export function BattlePage() {
   };
 
   // const handleStartBattle = () => {
-    // setStage("active");
+    // setStage("active"); http://127.0.0.1:8000 
     const handleStartBattle = async () => {
   try {
-    // 👇 Call your Laravel API endpoint
+    
     const res = await fetch("https://www.hsconsultants.net/api/admin/get-quiz");
     const data = await res.json();
+    console.log("ques",data);
     
      if (data && Array.isArray(data.data) && data.data.length > 0) {
       setQuestions(data.data);  

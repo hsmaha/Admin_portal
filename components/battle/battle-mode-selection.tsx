@@ -82,11 +82,10 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
               </li>
                <li className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span>Do not forget to tag 3 of your friends on the post and ask them to follow us back</span>
+                <span>Do not forget to tag 3 of your friends on the main quiz announcement post on our Instagram and ask them to follow us back</span>
               </li>
-               <li className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                <span>Best of luck!!</span>
+               <li className="text-center gap-2">
+                <div className="m-4">Best of luck!!</div>
               </li>
              
             </ul>

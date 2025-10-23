@@ -69,7 +69,7 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
               const podiumHeight = index === 1 ? "h-40" : index === 0 ? "h-48" : "h-32";
               const position = index === 1 ? 2 : index === 0 ? 1 : 3;
 
-              return (
+              return ( 
                 <div key={player.id} className="flex flex-col items-center">
                   <div className="mb-2">
                     <Avatar className="h-16 w-16 border-4 border-background shadow-lg">
@@ -115,7 +115,7 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
       Thank you for participating!
     </h2>
     
-      <p className="text-gray-300 mb-6 mr-4 ml-4 max-w">Your submission has been successfully recorded. Do not forget to <span className="text-orange-300">Tag 3 of your friends</span> on the post and ask them to follow us back. Results will be announced shortly via your registered email address, so please keep an eye on your inbox!
+      <p className="text-gray-300 mb-6 mr-4 ml-4 max-w">Your submission has been successfully recorded. Do not forget to <span className="text-orange-300">Tag 3 of your friends</span> on the main quiz announcement post on our Instagram and ask them to follow us back. Results will be announced shortly via your registered email address, so please keep an eye on your inbox!
     </p>
     {/* <button
       disabled
