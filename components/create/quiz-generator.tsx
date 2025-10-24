@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sparkles, CheckCircle } from "lucide-react";
 import { useState } from "react";
+import axios from "axios"; 
 
 export function QuizGenerator() {
   const [fullname, setfullname] = useState("");
@@ -28,6 +29,8 @@ export function QuizGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGenerated, setIsGenerated] = useState(false);
   const [errors, setErrors] =  useState<Record<string, string>>({});
+  const [formerror, setformerror] = useState("");
+  
 const validateForm = () => {
 const newErrors: Record<string, string> = {};
 
@@ -46,18 +49,53 @@ const newErrors: Record<string, string> = {};
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
 };
+const storeUser = async () => {
+  try {
+    const payload = {
+      fullname,
+      instaacc,
+      phone,
+      email,
+      city,
+      lasteducation,
+      institute,
+    };
 
-  const handleGenerate = () => {
-    if (!validateForm()) return;
+    const response = await axios.post(
+      "https://www.hsconsultants.net/api/admin/save-user",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
 
-    setIsGenerating(true);
+    console.log("Saved successfully:", response.data);
+    return true; 
+  } catch (error) {
+    console.error("Error saving user:", error);
+    setformerror("Couldn’t complete registration, Please retry.");
+    return false; 
+  }
+};
+  const handleGenerate = async () => {
+  if (!validateForm()) return;
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsGenerating(false);
-      setIsGenerated(true);
-    }, 2000);
-  };
+  setIsGenerating(true);
+  setformerror(""); // clear old error
+
+  const success = await storeUser(); // wait for API call
+
+  setIsGenerating(false);
+
+  if (success) {
+    setIsGenerated(true); 
+  } else {
+    setIsGenerated(false); 
+  }
+};
 
   return (
   
@@ -73,6 +111,25 @@ const newErrors: Record<string, string> = {};
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {formerror && (
+                      <div className="flex items-center border border-red-700 text-red-400 text-sm py-2 rounded-md shadow-sm">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-red-500"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 9v2m0 4h.01M12 5a7 7 0 11-0.001 14.001A7 7 0 0112 5z"
+                          />
+                        </svg>
+                        <span>{formerror}</span>
+                      </div>
+                    )}
                 <div className="space-y-2 text-left">
                   <Label htmlFor="fullname">Full Name</Label>
                   <Input
@@ -214,8 +271,8 @@ const newErrors: Record<string, string> = {};
       Thank you for registering for the </p>
       <p className="font-semibold text-white max-w-sm">Minute to Win It Challenge</p> <p className="text-gray-300 max-w-sm">by</p> <p className="font-semibold text-white max-w-sm mb-12">HS Consultants (Pvt) Ltd.  </p>
      
-      <p className="text-gray-300 mb-6 max-w-sm"><b>Congratulations!</b> You have been selected for the Minute to Win It Challenge!
-        You will soon receive an email with the quiz details. Through that email, you’ll get the opportunity to attempt the quiz, so please keep an eye on your inbox!
+      <p className="text-gray-300 mb-12 max-w-sm "><span className="text-orange-400"><b>Congratulations!</b></span> on registering for the Minute to Win It Challenge! You have embraced the challenge be proud about it!! 
+You will soon receive an email with the quiz details. Through that email, you’ll get the opportunity to attempt the quiz, so please keep an eye on your <span className="text-orange-300">inbox!</span>
     </p>
     {/* <button
       disabled
