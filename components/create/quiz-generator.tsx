@@ -71,9 +71,15 @@ const storeUser = async () => {
         },
       }
     );
+    if(response.data.status == 200){
+      console.log("Saved successfully:", response.data);
+      return true; 
 
-    console.log("Saved successfully:", response.data);
-    return true; 
+    }else{
+      setformerror(response.data.message);
+      return false; 
+
+    }
   } catch (error) {
     console.error("Error saving user:", error);
     setformerror("Couldn’t complete registration, Please retry.");
