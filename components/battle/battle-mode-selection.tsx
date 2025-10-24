@@ -24,6 +24,7 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
   const [roomCode, setRoomCode] = useState<string>("");
 
   const handleStartBattle = () => {
+    
     onModeSelect(activeTab, battleType, {
       category: category !== "random" ? category : undefined,
       difficulty,

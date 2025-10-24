@@ -9,6 +9,8 @@ import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
 import { useEffect, useReducer, useState } from "react";
 import { BattleState } from "./battle-page";
 import axios from 'axios'
+const TOTAL_QUESTIONS=6;
+
 
 interface ActiveBattleProps {
   battleState: BattleState;
@@ -22,6 +24,7 @@ interface ActiveBattleProps {
     totalTimeTaken: number;
   }) => void;
   questions: any[];
+   userToken?: string;
 }
 
 interface Question {
@@ -54,7 +57,8 @@ interface GameState {
 }
 
 // Action types
-type GameAction = { type: "SELECT_ANSWER"; payload: number } | { type: "SUBMIT_ANSWER"; payload: {  questionId: number; answerIndex: number | null; correctAnswer: number; timeLeft: number; timePerQuestion: number;  } } | { type: "NEXT_QUESTION"; payload: { timePerQuestion: number } } | { type: "TICK_TIMER" } | { type: "UPDATE_PLAYER_RANKINGS"; payload: Player[] } | { type: "RESET_FEEDBACK" };
+type GameAction = { type: "SELECT_ANSWER"; payload: number } | { type: "SUBMIT_ANSWER"; payload: {  questionId: number; answerIndex: number | null; correctAnswer: number; timeLeft: number; timePerQuestion: number;  } } | { type: "NEXT_QUESTION"; payload: { timePerQuestion: number } } | { type: "TICK_TIMER" } | { type: "UPDATE_PLAYER_RANKINGS"; payload: Player[] } | { type: "RESET_FEEDBACK" }| { type: "RESTORE_PROGRESS"; payload: { currentQuestion: number; answers: any[] } };
+
 
 // Initial state
 const createInitialState = (battleState: BattleState): GameState => ({
@@ -67,7 +71,6 @@ const createInitialState = (battleState: BattleState): GameState => ({
   showFeedback: false,
   playerRankings: battleState.players,
   answers: [],
-  
 });
 
 // Reducer function
@@ -96,14 +99,22 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
 }
 
     case "NEXT_QUESTION":
-      return {
-        ...state,
-        currentQuestion: state.currentQuestion + 1,
-        selectedAnswer: null,
-        isCorrect: null,
-        showFeedback: false,
-        timeLeft: action.payload.timePerQuestion,
-      };
+       return {
+    ...state,
+    currentQuestion: state.currentQuestion + 1,
+    selectedAnswer: null,
+    isCorrect: null,
+    showFeedback: false,
+    timeLeft: action.payload.timePerQuestion,
+  };
+      // return {
+      //   ...state,
+      //   currentQuestion: state.currentQuestion + 1,
+      //   selectedAnswer: null,
+      //   isCorrect: null,
+      //   showFeedback: false,
+      //   timeLeft: action.payload.timePerQuestion,
+      // };
 
     case "TICK_TIMER":
       return {
@@ -124,14 +135,71 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
         isCorrect: null,
         showFeedback: false,
       };
-
+case "RESTORE_PROGRESS":
+  return {
+    ...state,
+    currentQuestion: action.payload.currentQuestion || 0,
+    answers: action.payload.answers || [],
+  };
     default:
       return state;
   }
 };
 
-export function ActiveBattle({ battleState, onBattleComplete, questions }: ActiveBattleProps) {
+export function ActiveBattle({ battleState, onBattleComplete, questions ,userToken  }: ActiveBattleProps) {
   const [state, dispatch] = useReducer(gameReducer, battleState, createInitialState);
+  useEffect(() => {
+  if (!state || state.answers.length === 0) return;
+
+  const saved = localStorage.getItem(storageKey);
+  const parsed = saved ? JSON.parse(saved) : {};
+
+  localStorage.setItem(
+    storageKey,
+    JSON.stringify({
+      ...parsed,
+      currentQuestion: state.currentQuestion,
+      answers: state.answers,
+      quizCompleted: false,
+    })
+  );
+}, [state.currentQuestion, state.answers]);
+  //  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  // const userToken = searchParams.get("token") || undefined;
+const storageKey = `quizProgress_${userToken || "guest"}`;
+const saved = localStorage.getItem(storageKey);
+const parsed = saved ? JSON.parse(saved) : null;
+// const storageKey = `quizProgress_${userToken || "guest"}`;
+// const saved = localStorage.getItem(storageKey);
+// const parsed = saved ? JSON.parse(saved) : null;
+useEffect(() => {
+  const saved = localStorage.getItem(storageKey);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (parsed.answers?.length > 0 && !parsed.quizCompleted) {
+      dispatch({
+        type: "RESTORE_PROGRESS",
+        payload: {
+          currentQuestion: parsed.currentQuestion || 0,
+          answers: parsed.answers || [],
+        },
+      });
+    }
+  }
+}, []);
+
+  // const savedProgress = localStorage.getItem(storageKey);
+  //  const parsed = savedProgress ? JSON.parse(savedProgress) : null;
+
+  // ✅ If quiz was already completed, prevent reattempt
+  if (parsed?.quizCompleted) {
+    return (
+      <div className="text-center p-10">
+        <h2 className="text-2xl font-bold text-green-600 mb-4">🎉 You have already submitted your quiz!</h2>
+        <p className="text-gray-700">Your responses are already recorded for this token.</p>
+      </div>
+    );
+  }
 const formatAnswersForDb = (answers: any[]) => {
   const formatted: any = {};
   answers.forEach((ans, index) => {
@@ -144,7 +212,7 @@ const formatAnswersForDb = (answers: any[]) => {
 };
 const storeResponse = async () => {
   const payload = {
-    tokenQ: 'fxhxxfxf', // optional token
+    token: userToken, // optional token
     ...formatAnswersForDb(state.answers),
   };
 axios
@@ -190,6 +258,22 @@ axios
     }
   }, [state.timeLeft, state.showFeedback]);
 
+// useEffect(() => {
+//   // Don't run until user starts answering
+//   if (state.answers.length === 0) return;
+
+//   const isCompleted = state.answers.length === TOTAL_QUESTIONS;
+
+//   const progress = {
+//     currentQuestion: state.currentQuestion,
+//     answers: state.answers,
+//     quizCompleted: isCompleted,
+//   };
+
+//   localStorage.setItem(storageKey, JSON.stringify(progress));
+// }, [state.currentQuestion, state.answers]);
+
+
   // Simulate other players' progress
   useEffect(() => {
     const interval = setInterval(() => {
@@ -211,50 +295,63 @@ axios
     return () => clearInterval(interval);
   }, [state.playerRankings]);
 
-useEffect(() => {
-  if (state.answers.length === questions.length) {
-    const totalTimeTaken = state.answers.reduce(
-      (sum, ans) => sum + ans.timeTaken,
-      0
-    );
-
-    console.log("✅ All answers with time taken:", state.answers);
-    console.log("⏱️ Total time taken:", totalTimeTaken, "seconds");
-    storeResponse();
-      onBattleComplete({
-      score: state.score,
-      correctAnswers: 0,
-      totalTimeTaken,
-    });
-  }
-}, [state.answers]);
-
+  
   const handleAnswerSelect = (index: number) => {
     dispatch({ type: "SELECT_ANSWER", payload: index });
   };
-
-const handleAnswerSubmit = (index: number | null) => {
-  const currentQ = questions[state.currentQuestion];
-  const correctAnswerIndex = currentQ.options.indexOf(currentQ.correct_answer);
-
-  dispatch({
-    type: "SUBMIT_ANSWER",
-    payload: {
-      answerIndex: index,
-      correctAnswer: correctAnswerIndex,
-      timeLeft: state.timeLeft,
-      timePerQuestion: battleState.timePerQuestion,
-      questionId: currentQ.id,
-    },
-  });
-
-  if (state.currentQuestion < questions.length - 1) {
+  
+  const handleAnswerSubmit = (index: number | null) => {
+    const currentQ = questions[state.currentQuestion];
+    const correctAnswerIndex = currentQ.options.indexOf(currentQ.correct_answer);
+    
     dispatch({
-      type: "NEXT_QUESTION",
-      payload: { timePerQuestion: battleState.timePerQuestion },
+      type: "SUBMIT_ANSWER",
+      payload: {
+        answerIndex: index,
+        correctAnswer: correctAnswerIndex,
+        timeLeft: state.timeLeft,
+        timePerQuestion: battleState.timePerQuestion,
+        questionId: currentQ.id,
+      },
     });
-  }
-};
+    
+    if (state.currentQuestion < questions.length - 1) {
+      dispatch({
+        type: "NEXT_QUESTION",
+        payload: { timePerQuestion: battleState.timePerQuestion },
+      });
+    }
+  };
+  useEffect(() => {
+    // if (state.answers.length === questions.length) {
+    //   const totalTimeTaken = state.answers.reduce(
+    //     (sum, ans) => sum + ans.timeTaken,
+    //     0
+    //   );
+     if (state.answers.length === TOTAL_QUESTIONS) {
+      const totalTimeTaken = state.answers.reduce(
+        (sum, ans) => sum + ans.timeTaken,
+        0
+      );
+  
+   localStorage.setItem(
+        storageKey,
+        JSON.stringify({
+          ...state,
+          quizCompleted: true,
+        })
+      );
+      
+      console.log("✅ All answers with time taken:", state.answers);
+      console.log("⏱️ Total time taken:", totalTimeTaken, "seconds");
+      storeResponse();
+        onBattleComplete({
+        score: state.score,
+        correctAnswers: 0,
+        totalTimeTaken,
+      });
+    }
+  }, [state.answers]);
 
   
   if (questions.length === 0) return <div>No questions found.</div>;

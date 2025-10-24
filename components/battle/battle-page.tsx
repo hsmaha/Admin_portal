@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { ActiveBattle } from "./active-battle";
 import { BattleLobby } from "./battle-lobby";
 import { BattleModeSelection } from "./battle-mode-selection";
 import { BattleResults } from "./battle-results";
 
-type BattleStage = "selection" | "lobby" | "active" | "results";
+type BattleStage = "selection" | "lobby" | "active" | "results" | "already-completed";
 type BattleMode = "1v1" | "group";
 type BattleType = "public" | "private";
 
@@ -36,9 +36,42 @@ export interface Player {
 }
 
 export function BattlePage() {
-  const [stage, setStage] = useState<BattleStage>("selection");
+  
   const [questions, setQuestions] = useState([]);
+  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  const tokenfromURL = searchParams.get("token") || undefined;
+  // const userToken = searchParams.get("token") || "guest";
+  const storageKey = `quizProgress_${tokenfromURL || "guest"}`;
+  let initialStage: BattleStage = "selection";
+try {
+  const saved = localStorage.getItem(storageKey);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (parsed.answers?.length > 0) {
+      initialStage = "active"; // user was mid-quiz
+    }
+  }
+} catch (e) {
+  console.warn("Could not parse saved progress", e);
+}
+  // const [stage, setStage] = useState<BattleStage>("selection");
+  const [stage, setStage] = useState<BattleStage>(initialStage);
 
+
+useEffect(() => {
+  const saved = localStorage.getItem(storageKey);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (parsed.quizCompleted) {
+      // ✅ Mark as already completed
+      setStage("already-completed");
+    }else if (initialStage === "active") {
+      if (parsed.questions) {
+        setQuestions(parsed.questions);
+      }
+    }
+  }
+}, []);
   const [battleState, setBattleState] = useState<BattleState>({
     mode: "1v1",
     type: "public",
@@ -125,6 +158,7 @@ export function BattlePage() {
   // const handleStartBattle = () => {
     // setStage("active"); http://127.0.0.1:8000 
     const handleStartBattle = async () => {
+      
   try {
     
     const res = await fetch("https://www.hsconsultants.net/api/admin/get-quiz");
@@ -133,7 +167,18 @@ export function BattlePage() {
     
      if (data && Array.isArray(data.data) && data.data.length > 0) {
       setQuestions(data.data);  
-      setStage("active");       
+      setStage("active");  
+       
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({
+          questions: data.data,
+          currentQuestion: 0,
+          answers: [],
+          quizCompleted: false,
+        })
+      );
+      
     } else {
       alert("Could not load quiz questions. Please try again.");
     }
@@ -181,11 +226,19 @@ export function BattlePage() {
   return (
     
     <div className="container mx-auto">
+      {stage === "already-completed" && (
+  <div className="text-center p-10">
+    <h2 className="text-2xl font-bold text-green-600 mb-4">
+      🎉 You have already submitted your quiz!
+    </h2>
+    <p className="text-gray-700">Your responses are already recorded for this token.</p>
+  </div>
+)}
       {stage === "selection" && <BattleModeSelection onModeSelect={handleModeSelect} />}
 
       {stage === "lobby" && <BattleLobby battleState={battleState} onStartBattle={handleStartBattle} onCancel={handleReturnHome} />}
 
-      {stage === "active" && <ActiveBattle battleState={battleState} onBattleComplete={handleBattleComplete} questions={questions}/>}
+      {stage === "active" && <ActiveBattle battleState={battleState} onBattleComplete={handleBattleComplete} questions={questions} userToken={tokenfromURL}/>}
       
 
       {stage === "results" && <BattleResults battleState={battleState} onRematch={handleRematch} onReturnHome={handleReturnHome} />}
