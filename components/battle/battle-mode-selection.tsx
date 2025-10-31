@@ -9,7 +9,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Globe, ListChecks, Lock, Swords, Trophy, Users } from "lucide-react";
 import { useState } from "react";
 import { BattleState } from "./battle-page";
+
 import axios from "axios";
+
+import { Checkbox } from "@/components/ui/checkbox";
+
+const rules = [
+  "One entry per person",
+  "Answer all 5 questions within 60 seconds",
+  "Winner will be the one who answers correctly and that too the fastest among you all",
+  "Make sure you are ready as there are NO SECOND CHANCES",
+  "Do not forget to tag 3 of your friends on the main quiz announcement post on our Instagram and ask them to follow us back",
+];
+
 interface BattleModeSelectionProps {
   onModeSelect: (mode: "1v1" | "group", type: "public" | "private", settings: Partial<BattleState>) => void;
 }
@@ -23,10 +35,22 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
   const [totalQuestions, setTotalQuestions] = useState<number>(10);
   const [roomCode, setRoomCode] = useState<string>("");
 
+
   const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
   const tokenfromURL = searchParams.get("token") || undefined;
 
-  const handleStartBattle = () => {
+  const [checkedRules, setCheckedRules] = useState<boolean[]>(Array(rules.length).fill(false));
+
+  const allChecked = checkedRules.every(Boolean);
+
+  const toggleRule = (index: number) => {
+    const updated = [...checkedRules];
+    updated[index] = !updated[index];
+    setCheckedRules(updated);
+  };
+const handleStartBattle = () => {
+    if (!allChecked) return;
+
     onModeSelect(activeTab, battleType, {
       category: category !== "random" ? category : undefined,
       difficulty,
@@ -49,6 +73,17 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
   });
   };
 
+  // const handleStartBattle = () => {
+    
+  //   onModeSelect(activeTab, battleType, {
+  //     category: category !== "random" ? category : undefined,
+  //     difficulty,
+  //     timePerQuestion,
+  //     totalQuestions,
+  //     roomCode: battleType === "private" ? roomCode : undefined,
+  //   });
+  // };
+
   return (
     <div className="max-w-4xl mx-auto">
       
@@ -57,7 +92,7 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
        
 
         <TabsContent value="1v1" className="space-y-6">
-          <Card className="p-6">
+          <Card className="p-4">
             <CardHeader>
               <h3 className="text-center">Welcome to the </h3>
            
@@ -72,14 +107,31 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
              <Card>
           <CardHeader className="pb-2">
               <CardDescription className="text-center">We appreciate you for taking this challenge and wish you all the best. Before your proceed please read the Game Rules below:</CardDescription>
-            <CardTitle className="text-lg flex items-center gap-2">
+          </CardHeader>
+          <CardContent>
+            <CardTitle className="mb-2 text-lg flex items-center gap-2">
               
               <Clock className="h-5 w-5 text-blue-500" />
                Rules
             </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-1 text-sm">
+            <ul className="space-y-2 text-sm">
+                  {rules.map((rule, index) => (
+                    <li key={index} className="flex items-center gap-3">
+                      <Checkbox
+                        id={`rule-${index}`}
+                        checked={checkedRules[index]}
+                        onCheckedChange={() => toggleRule(index)}
+                      />
+                      <label htmlFor={`rule-${index}`} className="cursor-pointer select-none">
+                        {rule}
+                      </label>
+                    </li>
+                  ))}
+                   <li className="text-center gap-2">
+                <div className="">Best of luck!!</div>
+              </li>
+                </ul>
+            {/* <ul className="space-y-1 text-sm">
               <li className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full bg-green-500"></div>
                 <span>One entry per person</span>
@@ -104,12 +156,12 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
                 <div className="m-4">Best of luck!!</div>
               </li>
              
-            </ul>
+            </ul> */}
           </CardContent>
         </Card>
             <CardFooter>
-              <Button onClick={handleStartBattle} className="w-full">
-                Start Quiz
+              <Button onClick={handleStartBattle} className="w-full" disabled={!allChecked}>
+                {allChecked ? "Start Quiz" : "Please check all rules to start"}
               </Button>
             </CardFooter>
           </Card>

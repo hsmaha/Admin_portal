@@ -231,7 +231,7 @@ useEffect(() => {
     <h2 className="text-2xl font-bold text-green-600 mb-4">
       🎉 You have already submitted your quiz!
     </h2>
-    <p className="text-gray-700">Your responses are already recorded for this token.</p>
+    <p className="text-gray-700">Your quiz responses are safely recorded and cannot be changed.</p>
   </div>
 )}
       {stage === "selection" && <BattleModeSelection onModeSelect={handleModeSelect} />}
