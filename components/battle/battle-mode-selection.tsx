@@ -59,7 +59,7 @@ const handleStartBattle = () => {
       roomCode: battleType === "private" ? roomCode : undefined,
     });
     axios
-  .post("https://www.hsconsultants.net/api/admin/email-rules", tokenfromURL, {
+  .post("https://www.hsconsultants.net/api/admin/email-rules", {token:tokenfromURL}, {
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
