@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Globe, ListChecks, Lock, Swords, Trophy, Users } from "lucide-react";
 import { useState } from "react";
 import { BattleState } from "./battle-page";
-
+import axios from "axios";
 interface BattleModeSelectionProps {
   onModeSelect: (mode: "1v1" | "group", type: "public" | "private", settings: Partial<BattleState>) => void;
 }
@@ -23,8 +23,10 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
   const [totalQuestions, setTotalQuestions] = useState<number>(10);
   const [roomCode, setRoomCode] = useState<string>("");
 
+  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+  const tokenfromURL = searchParams.get("token") || undefined;
+
   const handleStartBattle = () => {
-    
     onModeSelect(activeTab, battleType, {
       category: category !== "random" ? category : undefined,
       difficulty,
@@ -32,6 +34,19 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
       totalQuestions,
       roomCode: battleType === "private" ? roomCode : undefined,
     });
+    axios
+  .post("https://www.hsconsultants.net/api/admin/email-rules", tokenfromURL, {
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  })
+  .then((response) => {
+    console.log("Saved successfully:", response.data);
+  })
+  .catch((error) => {
+    console.error("Error saving answers:", error.response?.data || error.message);
+  });
   };
 
   return (
@@ -92,9 +107,6 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
             </ul>
           </CardContent>
         </Card>
-
-
-           
             <CardFooter>
               <Button onClick={handleStartBattle} className="w-full">
                 Start Quiz
