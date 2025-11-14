@@ -14,6 +14,8 @@ const buttonVariants = cva("inline-flex items-center duration-300 justify-center
       ghost: "hover:bg-accent hover:text-accent-foreground",
       link: "text-primary underline-offset-4 hover:underline",
       gradient: " bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white border-0",
+      warm: "bg-amber-500 text-white hover:bg-amber-600 focus-visible:ring-amber-300",
+    warmoutline: "border border-orange-600 text-orange-600 bg-background  hover:text-orange-700",
     },
     size: {
       default: "h-10 px-4 py-2",

@@ -96,13 +96,13 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center border rounded-xl border-orange-400">
         <div className="md:col-span-2">
           <div className="flex flex-col items-center justify-center text-center p-4 bg-[#0b0b16] text-white shadow-lg rounded-xl border border-gray-800 max-w mx-auto">
     <div className="mb-4 mt-8">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-16 w-16 text-purple-400 mx-auto"
+        className="h-20 w-20 text-green-400 mx-auto"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -111,7 +111,7 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2l4 -4m6 2a9 9 0 1 1 -18 0a9 9 0 0 1 18 0z" />
       </svg>
     </div>
-    <h2 className="text-2xl font-semibold text-purple-400 mb-12">
+    <h2 className="text-2xl font-semibold text-orange-400 mb-12">
       Thank you for participating!
     </h2>
     

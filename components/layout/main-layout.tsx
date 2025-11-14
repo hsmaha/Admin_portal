@@ -20,9 +20,11 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                       <div
                         className="min-h-screen flex bg-cover bg-center bg-no-repeat p-8"
                         style={{
-                          backgroundImage: "url('/images/1.jpg')",
+                          backgroundImage: "url('https://i.pinimg.com/736x/5c/24/65/5c246559d709a01ca7727475c0e06098.jpg')",
                           backgroundBlendMode: "overlay",
-                        }}>{children}
+                          // backgroundColor:"white"
+                        }}
+                        >{children}
                           {/* </div> */}
                         </div>
         </main>

@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
 import { useEffect, useReducer, useState } from "react";
@@ -148,6 +148,10 @@ case "RESTORE_PROGRESS":
 
 export function ActiveBattle({ battleState, onBattleComplete, questions ,userToken  }: ActiveBattleProps) {
   const [state, dispatch] = useReducer(gameReducer, battleState, createInitialState);
+  const radius = 16;
+  const circumference = 2 * Math.PI * radius;
+
+  const qprogress = (state.timeLeft / 10) * circumference;
   useEffect(() => {
   if (!state || state.answers.length === 0) return;
 
@@ -360,20 +364,24 @@ axios
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <div className="text-sm font-medium text-black">
-            Question {state.currentQuestion + 1} of {questions.length}
-          </div>
-          <div className="flex items-center gap-2">
+  <div className="mb-4">
+    <div className="flex items-center gap-3">
+        <div className="text-xs text-white whitespace-nowrap p-1" style={{backgroundColor:"black", borderRadius:'2px'}}>
+            Q{state.currentQuestion + 1} of {questions.length}
+        </div>
+            <Progress value={progress} className="h-2" />
+          {/* <div className="flex items-center gap-1 text-xs text-black whitespace-nowrap">
             <Clock className="h-4 w-4 text-orange-500" />
             <span className="font-bold text-black">{state.timeLeft}s</span>
-          </div>
-        </div>
-        <Progress value={progress} className="h-2" />
+          </div> */}
+          {/* <div className="flex items-center gap-2"> */}
+            {/* <Clock className="h-4 w-4 text-orange-500" /> */}
+            {/* <span className="font-bold text-black">{state.timeLeft}s</span> */}
+          {/* </div> */}
+      </div>
       </div>
 
-      {battleState.mode === "group" && (
+      {/* {battleState.mode === "group" && (
         <div className="mb-6">
           <h3 className="text-sm font-medium mb-2">Live Rankings</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
@@ -392,20 +400,62 @@ axios
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
+        <div className="relative max-w-sm mx-auto mt-10">
+      {/* Timer circle */}
+      <div className="absolute -top-6 left-1/2 transform -translate-x-1/2">
+        <div className="relative w-16 h-16 rounded-full bg-black flex items-center justify-center text-white font-bold">
+          <svg className="absolute inset-0" viewBox="0 0 36 36">
+             <circle
+          cx="18"
+          cy="18"
+          r={radius}
+          stroke="#1e1e1e"
+          strokeWidth="3"
+          fill="none"
+        />
+
+        {/* Progress circle */}
+        <circle
+          cx="18"
+          cy="18"
+          r={radius}
+          stroke="orange"
+          strokeWidth="3"
+          fill="none"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference - qprogress}
+          strokeLinecap="round"
+          className="transition-all duration-300 ease-linear"
+        />
+          </svg>
+           <div className="flex items-center gap-1 text-xs text-black whitespace-nowrap">
+            {/* <Clock className="h-4 w-4 text-orange-500" /> */}
+            <span className="font-bold text-white">{state.timeLeft}s</span>
+          </div>
+        </div>
+      </div>
+      </div>
       <Card className="mb-6">
-        <CardContent className="pt-6">
+        <CardContent className="pt-6" >
+          <div className="text-center m-4">Question 0{state.currentQuestion + 1}</div>
+            <div className="text-center">
          <div className="text-xl font-bold mb-6">{currentQ.text}</div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            </div>
+        </CardContent>
+      </Card>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 ">
+
             {currentQ.options.map((option: string, index: number) => (
-                  <Button
-                    key={index}
-                    variant={state.selectedAnswer === index ? "default" : "outline"}
-                    onClick={() => handleAnswerSelect(index)}
-                  >
+              <Button
+              
+              key={index}
+              variant={state.selectedAnswer === index ? "warmoutline" : "outline"}
+              onClick={() => handleAnswerSelect(index)}
+              >
                     <div className="flex items-center w-full">
-                      <div className="mr-3 h-6 w-6 rounded-full border flex items-center justify-center">
+                      <div className="mr-3 h-6 w-6  rounded-full border flex items-center justify-center">
                         {String.fromCharCode(65 + index)}
                       </div>
                       <span>{option}</span>
@@ -413,10 +463,8 @@ axios
                   </Button>
                 ))}
           </div>
-        </CardContent>
-      </Card>
 
-      <div className="flex justify-between items-center">
+      <div className="text-center m-4" >
         <div className="flex items-center gap-4">
           {/* <div>
             <div className="text-sm text-muted-foreground">Score</div>
@@ -429,10 +477,11 @@ axios
           )} */}
         </div>
 
-        <Button onClick={() => handleAnswerSubmit(state.selectedAnswer)} disabled={state.selectedAnswer === null || state.showFeedback}>
+        <Button variant="warm" onClick={() => handleAnswerSubmit(state.selectedAnswer)} disabled={state.selectedAnswer === null || state.showFeedback}>
           Submit Answer
         </Button>
       </div>
+
 
     
     </div>
