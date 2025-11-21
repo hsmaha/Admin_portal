@@ -52,16 +52,15 @@ export function BattleLobby({ battleState, onStartBattle, onCancel }: BattleLobb
 
   const qprogress = (countdown / 15) * circumference;
   return (
-    <div className="max-w-4xl m-12">
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center ">
-        <div className="md:col-span-2 ">
-          <Card className="p-6 m-auto">
+     <div className="flex items-center justify-center min-h-screen">
+  <div className="max-w-4xl w-full">
+          <Card className="p-6 m-auto bg-black/60">
             <CardHeader>
-              <CardTitle className="mt-12">Are you Ready?!</CardTitle>
+              <CardTitle className="mt-12 text-center">Are you Ready?!</CardTitle>
               </CardHeader>
             <CardContent>
               {countdown > 0 ? (<div>
-                <div className="relative w-20 h-20 rounded-full bg-black flex items-center justify-center text-white font-bold mx-auto">
+                <div className="relative w-20 h-20 rounded-full bg-black flex items-center justify-center text-white font-bold mx-auto mt-4">
                   <svg className="absolute inset-0" viewBox="0 0 36 36">
                     <circle
                   cx="18"
@@ -92,17 +91,17 @@ export function BattleLobby({ battleState, onStartBattle, onCancel }: BattleLobb
                   </div>
                 </div>
               </div>):""}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-6 flex items-center p-4 xl:p-6 xl:pt-0">
-                {allReady || countdown == 0 ? (<Button onClick={onStartBattle}  variant="warm" >
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-6 flex items-center pt-4 pb-4">
+                {allReady || countdown == 0 ? (<Button className="rounded-full" onClick={onStartBattle}  variant="warm" >
                 Start
               </Button>): ""}
               {/* <Button onClick={onStartBattle} disabled={!allReady && countdown > 0} variant="warm" v-if={!allReady && countdown > 0}>
                 {countdown > 0 ? `Quiz will be starting in....` : "Start"}
               </Button> */}
               </div>
-                <div>{!allReady && countdown > 0 ? `Quiz will be starting in....`: ""}</div>
-                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-6 flex items-center p-4 xl:p-6 xl:pt-0">
-                 <Button variant="secondary" onClick={onCancel}>
+                <div className="text-center">{!allReady && countdown > 0 ? `Quiz will be starting in....`: ""}</div>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-6 flex items-center pt-4 pb-4">
+                 <Button className="rounded-full" variant="secondary" onClick={onCancel} >
                 <X className="mr-2 h-4 w-4" />
                 Cancel
               </Button>
@@ -121,7 +120,5 @@ export function BattleLobby({ battleState, onStartBattle, onCancel }: BattleLobb
         </div>
       </div>
 
-      
-    </div>
   );
 }

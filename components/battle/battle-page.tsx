@@ -227,11 +227,11 @@ useEffect(() => {
     
     <div className="container mx-auto">
       {stage === "already-completed" && (
-  <div className="text-center p-10">
-    <h2 className="text-2xl font-bold text-green-600 mb-4">
+  <div className="text-center p-10 bg-black/60 border rounded-xl ">
+    <h2 className="text-2xl font-bold text-green-600 mb-4 " >
       🎉 You have already submitted your quiz!
     </h2>
-    <p className="text-gray-700">Your quiz responses are safely recorded and cannot be changed.</p>
+    <p className="text-white-700">Your quiz responses are safely recorded and cannot be changed.</p>
   </div>
 )}
       {stage === "selection" && <BattleModeSelection onModeSelect={handleModeSelect} />}

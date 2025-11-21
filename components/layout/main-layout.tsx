@@ -18,14 +18,25 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         {/* <main className="flex-1 overflow-auto p-3 md:p-4 xxl:p-6">{children}</main> */}
         <main className=" flex-1 min-h-screen overflow-auto" >
                       <div
-                        className="min-h-screen flex bg-cover bg-center bg-no-repeat p-8"
+                        className="min-h-screen flex flex-col bg-cover bg-center bg-no-repeat"
                         style={{
-                          backgroundImage: "url('https://i.pinimg.com/736x/5c/24/65/5c246559d709a01ca7727475c0e06098.jpg')",
-                          backgroundBlendMode: "overlay",
+                          backgroundImage: "url('https://hsconsultants.pk/images/bg.jpg')",
+                          backgroundSize: "100% 100%", // Ensures full image fits perfectly
+                          backgroundRepeat: "no-repeat",
                           // backgroundColor:"white"
                         }}
-                        >{children}
+                        
+                        >
+                          <div className="mt-16" >
+                          <img className="mx-auto" src="https://hsconsultants.net/images/pages/post-01.png" alt="" height={380} width={380}/>
+                          </div>
+                          <div>
+                          {children}
+                          </div>
                           {/* </div> */}
+                        <div className="px-8 py-16 text-center text-gray-300 ">
+                          <p className="text-xs">© 2025, Powered by HS Consultants (Pvt.) Ltd.</p>
+                        </div>
                         </div>
         </main>
    </div>

@@ -214,10 +214,11 @@ const formatAnswersForDb = (answers: any[]) => {
   });
   return formatted;
 };
-const storeResponse = async () => {
+const storeResponse = async (totalTimeTaken:any) => {
   const payload = {
     token: userToken, // optional token
     ...formatAnswersForDb(state.answers),
+    total_time:totalTimeTaken
   };
 axios
   .post("https://www.hsconsultants.net/api/admin/save-answers", payload, {
@@ -348,7 +349,7 @@ axios
       
       console.log("✅ All answers with time taken:", state.answers);
       console.log("⏱️ Total time taken:", totalTimeTaken, "seconds");
-      storeResponse();
+      storeResponse(totalTimeTaken);
         onBattleComplete({
         score: state.score,
         correctAnswers: 0,
@@ -363,7 +364,7 @@ axios
   const progress = (state.currentQuestion / questions.length) * 100;
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto p-8">
   <div className="mb-4">
     <div className="flex items-center gap-3">
         <div className="text-xs text-white whitespace-nowrap p-1" style={{backgroundColor:"black", borderRadius:'2px'}}>
@@ -449,13 +450,13 @@ axios
 
             {currentQ.options.map((option: string, index: number) => (
               <Button
-              
+              className="rounded-full p-6"
               key={index}
               variant={state.selectedAnswer === index ? "warmoutline" : "outline"}
               onClick={() => handleAnswerSelect(index)}
               >
                     <div className="flex items-center w-full">
-                      <div className="mr-3 h-6 w-6  rounded-full border flex items-center justify-center">
+                      <div className="mr-3 h-6 w-6 rounded-full border flex items-center justify-center">
                         {String.fromCharCode(65 + index)}
                       </div>
                       <span>{option}</span>
@@ -477,7 +478,7 @@ axios
           )} */}
         </div>
 
-        <Button variant="warm" onClick={() => handleAnswerSubmit(state.selectedAnswer)} disabled={state.selectedAnswer === null || state.showFeedback}>
+        <Button className="rounded-full" variant="warm" onClick={() => handleAnswerSubmit(state.selectedAnswer)} disabled={state.selectedAnswer === null || state.showFeedback}>
           Submit Answer
         </Button>
       </div>

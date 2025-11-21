@@ -16,10 +16,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 const rules = [
   "One entry per person",
-  "Answer all 5 questions within 60 seconds",
+  "Answer all 6 questions within 60 seconds",
   "Winner will be the one who answers correctly and that too the fastest among you all",
   "Make sure you are ready as there are NO SECOND CHANCES",
   "Do not forget to tag 3 of your friends on the main quiz announcement post on our Instagram and ask them to follow us back",
+  "Prize in hand, camera on! Mind it.. Winners will be invited to our office/venue in your city for a quick photo and prize collection"
 ];
 
 interface BattleModeSelectionProps {
@@ -66,19 +67,21 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
           },
         })
         .then((response) => {
-          if (response.status === 200) {
+          console.log("res",response);
+          
+          if (response.data.status === 200) {
             setIsValidToken(true);
           } else {
-            setIsValidToken(true);
+            setIsValidToken(false);
             setErrorMessage("Token is not valid. You cannot access this page!");
           }
         })
         .catch((error) => {
-          setIsValidToken(true);
+            setIsValidToken(false);
           setErrorMessage("An error occurred while verifying the token. Please try again later....");
         });
     } else {
-      setIsValidToken(true);
+            setIsValidToken(false);
       setErrorMessage("You cannot access this page without a valid token!!");
     }
   }, [tokenFromURL]);
@@ -111,20 +114,22 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
 
   if (!isValidToken) {
     return (
-       <div className="text-center p-10">
+    <div className="mt-8">
+       <div className="text-center p-10" style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}>
         <h2 className="text-2xl font-bold text-red-600 mb-4">{errorMessage}</h2>
-         <div className="flex justify-center"><img src="https://static.vecteezy.com/system/resources/previews/019/551/975/non_2x/error-page-page-not-found-icon-in-line-style-design-isolated-on-white-background-editable-stroke-vector.jpg" alt="" width={50} height={50}/></div>
-      </div>
+       </div>
+    </div>
+         
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto grid place-items-center min-h-screen">
       <Tabs defaultValue="1v1" className="w-full" onValueChange={(value) => setActiveTab(value as "1v1" | "group")}>
         <TabsContent value="1v1" className="space-y-6">
-          <Card className="p-4 rounded-xl" >
+          <Card className="pl-4 pr-4 rounded-xl bg-black/60" >
             <CardHeader>
-              <div className="mx-auto "><Clock className="h-8 w-8 text-orange-500 m-3" /> </div>
+              {/* <div className="mx-auto "><Clock className="h-8 w-8 text-orange-500 m-3" /> </div> */}
               <CardTitle className="text-center text-400">Minute to Win it Competition</CardTitle>
               <h3 className="text-center">Powered By HS Consultants (Pvt) Ltd.</h3>
             </CardHeader>
@@ -155,8 +160,8 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
                   </li>
                 </ul>
               </CardContent>
-            <CardFooter className="mb-12">
-              <Button onClick={handleStartBattle} className="w-full" disabled={!allChecked} variant="warm">
+            <CardFooter className="mb-12 mt-4">
+              <Button onClick={handleStartBattle} className="w-full rounded-full" disabled={!allChecked} variant="warm">
                 {allChecked ? "Start Quiz" : "Please check all rules to start"}
               </Button>
             </CardFooter>
@@ -174,7 +179,7 @@ export function BattleModeSelection({ onModeSelect }: BattleModeSelectionProps) 
               {/* Group Battle Settings */}
             </CardContent>
             <CardFooter>
-              <Button onClick={handleStartBattle} className="w-full">
+              <Button onClick={handleStartBattle} className="w-full rounded-full">
                 Start Group Battle
               </Button>
             </CardFooter>

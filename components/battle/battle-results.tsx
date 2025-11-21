@@ -58,9 +58,7 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
     }
   }, [currentPlayer?.score]);
   return (
-    <div className="max-w-4xl mx-auto">
-      
-
+    <div className="max-w-4xl m-auto " >
       {battleState.mode === "group" && (
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Podium</h2>
@@ -96,9 +94,9 @@ export function BattleResults({ battleState, onRematch, onReturnHome }: BattleRe
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center border rounded-xl border-orange-400">
-        <div className="md:col-span-2">
-          <div className="flex flex-col items-center justify-center text-center p-4 bg-[#0b0b16] text-white shadow-lg rounded-xl border border-gray-800 max-w mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6 text-center p-8" >
+        <div className="md:col-span-2 border rounded-xl border-orange-400" >
+          <div className="flex flex-col items-center justify-center text-center p-4 bg-[#0b0b16] text-white shadow-lg rounded-xl border border-gray-800 max-w mx-auto" style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}>
     <div className="mb-4 mt-8">
       <svg
         xmlns="http://www.w3.org/2000/svg"
