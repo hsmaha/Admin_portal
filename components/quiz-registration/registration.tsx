@@ -109,17 +109,17 @@ const storeUser = async () => {
 
   return (
     <div className="space-y-4 mx-auto">
-      <div className="flex justify-center items-center min-h-screen p-8 pt-4 pb-0 mx-auto" >
+      <div className="flex justify-center items-center mx-auto" >
         
         <div className="space-y-4" >
           {!isGenerated ? (
-            <Card className="border rounded-xl bg-black/40 p-4 ">
+            <Card className="border rounded-xl bg-black/40 p-4">
               {/* <CardHeader> */}
                 {/* <div className="mx-auto "><Clock className="h-8 w-8 text-orange-500 m-3" /> </div> */}
-                  <div className="mx-auto text-center p-4 text-lg m-2 font-extrabold">REGISTER NOW TO ENTER THE QUIZ!</div>
+                  <div className="mx-auto text-center p-4 pb-0 text-sm m-2 font-extrabold">REGISTER NOW TO ENTER THE QUIZ!</div>
                   
               {/* </CardHeader> */}
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4">
                 {formerror && (
                       <div className="flex items-center border border-red-700 text-red-400 text-sm py-2 rounded-md shadow-sm">
                         <svg
@@ -142,7 +142,7 @@ const storeUser = async () => {
                 <div className="space-y-2 ">
                   {/* <Label className="pl-4" htmlFor="fullname ">Full Name</Label> */}
                   <Input
-                    className="rounded-full"
+                    className="rounded-full text-xs" 
                     id="fullname"
                     placeholder="Enter Your Full Name"
                     value={fullname}
@@ -160,7 +160,7 @@ const storeUser = async () => {
                 <div className="space-y-2 ">
                   {/* <Label className="pl-4" htmlFor="phone">Contact Number</Label> */}
                   <Input
-                    className="rounded-full"
+                    className="rounded-full text-xs"
                     id="phone"
                     placeholder="Enter Number"
                     value={phone}
@@ -174,7 +174,7 @@ const storeUser = async () => {
                 <div className="space-y-2 ">
                  {/* <Label className="pl-4" htmlFor="email">Email</Label> */}
                   <Input
-                    className="rounded-full"
+                    className="rounded-full text-xs"
                     id="email"
                     placeholder="Enter Email"
                     value={email}
@@ -187,7 +187,7 @@ const storeUser = async () => {
                <div className="space-y-2 ">
                  {/* <Label className="pl-4" htmlFor="nic">NIC</Label> */}
                   <Input
-                    className="rounded-full"
+                    className="rounded-full text-xs"
                     id="nic"
                     placeholder="Enter NIC number"
                     value={nic}
@@ -197,24 +197,24 @@ const storeUser = async () => {
                       <p className="pl-4 text-sm text-red-500 mt-1">{errors.nic}</p>
                     )}
                 </div>
-                <div className="space-y-2  ">
+                <div className="space-y-2">
                  {/* <Label className="pl-4" htmlFor="city">City</Label> */}
                   <Select value={city} onValueChange={(value) => {
                       setcity(value);
                       if (errors.city) setErrors({ ...errors, city: "" });
                     }}>
-                    <SelectTrigger id="city" className="rounded-full">
+                    <SelectTrigger id="city" className="rounded-full text-xs">
                       <SelectValue placeholder="Select city" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="3">Karachi</SelectItem>
                       <SelectItem value="2">Lahore</SelectItem>
                       <SelectItem value="1">Islamabad</SelectItem>
-                      <SelectItem value="6">Faisalabad</SelectItem>
+                      {/* <SelectItem value="6">Faisalabad</SelectItem>
                       <SelectItem value="7">Gujranwala</SelectItem>
                       <SelectItem value="8">Sheikhupura</SelectItem>
                       <SelectItem value="9">Sialkot</SelectItem>
-                      <SelectItem value="10">Hyderabad</SelectItem>
+                      <SelectItem value="10">Hyderabad</SelectItem> */}
                     </SelectContent>
                   </Select>
                    {errors.city && (
@@ -225,7 +225,7 @@ const storeUser = async () => {
                 <div className="space-y-2 ">
                  {/* <Label className="pl-4" htmlFor="lasteducation">Last Education Qualification</Label> */}
                   <Input
-                    className="rounded-full"
+                    className="rounded-full text-xs"
                     id="lasteducation"
                     placeholder="Enter Last Qualification"
                     value={lasteducation}
@@ -238,7 +238,7 @@ const storeUser = async () => {
                   <div className="space-y-2 ">
                  {/* <Label className="pl-4" htmlFor="institute">Institute</Label> */}
                   <Input
-                    className="rounded-full"
+                    className="rounded-full text-xs"
                     id="institute"
                     placeholder="Enter Institute"
                     value={institute}
@@ -252,9 +252,9 @@ const storeUser = async () => {
                 <div className="space-y-2 ">
                  {/* <Label className="pl-4" htmlFor="instaacc">Your Instagram Username</Label> */}
                   <Input
-                    className="rounded-full"
+                    className="rounded-full text-xs"
                     id="instaacc"
-                    placeholder="i.e _abcuser_, abcxyz"
+                    placeholder="Your Instragram username i.e _abcuser_, abcxyz"
                     value={instaacc}
                     onChange={(e) => { setinstaacc(e.target.value); if (errors.instaacc) setErrors({ ...errors, instaacc: "" }); }}
                     />
