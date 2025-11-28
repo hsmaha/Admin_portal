@@ -1,80 +1,69 @@
 "use client";
-import React, { useState, useMemo } from "react";
-
+import React, { useState, useMemo ,useEffect} from "react";
+import axios from "axios";
 // Define a type for your registration data
 interface Registration {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    status: string;
-    city: string;
-    country: string;
-    phone: string;
-    registered: string;
+  u_id: number;
+  full_name: string;
+  phone: string;
+  email: string;
+  nic: string;
+  city: string;
+  last_qualification: string;
+  institute: string;
+  instagram_handle: string;
+  created_at: string;
 }
-
-// Generate the mock data (Increased to 50 items for better pagination demonstration)
-const API_DATA: Registration[] = [
-  { id: 1, name: 'User 1', email: 'user1@example.com', role: 'Admin', status: 'Inactive', city: 'City 1', country: 'Country 1', phone: '+1234567890', registered: '2025-11-1' },
-  { id: 2, name: 'User 2', email: 'user2@example.com', role: 'User', status: 'Active', city: 'City 2', country: 'Country 2', phone: '+1234567891', registered: '2025-11-2' },
-  { id: 3, name: 'User 3', email: 'user3@example.com', role: 'User', status: 'Active', city: 'City 3', country: 'Country 3', phone: '+1234567892', registered: '2025-11-3' },
-  { id: 4, name: 'User 4', email: 'user4@example.com', role: 'Admin', status: 'Active', city: 'City 4', country: 'Country 4', phone: '+1234567893', registered: '2025-11-4' },
-  { id: 5, name: 'User 5', email: 'user5@example.com', role: 'User', status: 'Inactive', city: 'City 5', country: 'Country 5', phone: '+1234567894', registered: '2025-11-5' },
-  { id: 6, name: 'User 6', email: 'user6@example.com', role: 'User', status: 'Active', city: 'City 6', country: 'Country 6', phone: '+1234567895', registered: '2025-11-6' },
-  { id: 7, name: 'User 7', email: 'user7@example.com', role: 'Admin', status: 'Active', city: 'City 7', country: 'Country 7', phone: '+1234567896', registered: '2025-11-7' },
-  { id: 8, name: 'User 8', email: 'user8@example.com', role: 'User', status: 'Inactive', city: 'City 8', country: 'Country 8', phone: '+1234567897', registered: '2025-11-8' },
-  { id: 9, name: 'User 9', email: 'user9@example.com', role: 'User', status: 'Active', city: 'City 9', country: 'Country 9', phone: '+1234567898', registered: '2025-11-9' },
-  { id: 10, name: 'User 10', email: 'user10@example.com', role: 'Admin', status: 'Active', city: 'City 10', country: 'Country 10', phone: '+1234567899', registered: '2025-11-10' },
-  { id: 11, name: 'User 11', email: 'user11@example.com', role: 'User', status: 'Inactive', city: 'City 11', country: 'Country 11', phone: '+1234567900', registered: '2025-11-11' },
-  { id: 12, name: 'User 12', email: 'user12@example.com', role: 'User', status: 'Active', city: 'City 12', country: 'Country 12', phone: '+1234567901', registered: '2025-11-12' },
-  { id: 13, name: 'User 13', email: 'user13@example.com', role: 'Admin', status: 'Active', city: 'City 13', country: 'Country 13', phone: '+1234567902', registered: '2025-11-13' },
-  { id: 14, name: 'User 14', email: 'user14@example.com', role: 'User', status: 'Inactive', city: 'City 14', country: 'Country 14', phone: '+1234567903', registered: '2025-11-14' },
-  { id: 15, name: 'User 15', email: 'user15@example.com', role: 'User', status: 'Active', city: 'City 15', country: 'Country 15', phone: '+1234567904', registered: '2025-11-15' },
-  { id: 16, name: 'User 16', email: 'user16@example.com', role: 'Admin', status: 'Active', city: 'City 16', country: 'Country 16', phone: '+1234567905', registered: '2025-11-16' },
-  { id: 17, name: 'User 17', email: 'user17@example.com', role: 'User', status: 'Inactive', city: 'City 17', country: 'Country 17', phone: '+1234567906', registered: '2025-11-17' },
-  { id: 18, name: 'User 18', email: 'user18@example.com', role: 'User', status: 'Active', city: 'City 18', country: 'Country 18', phone: '+1234567907', registered: '2025-11-18' },
-  { id: 19, name: 'User 19', email: 'user19@example.com', role: 'Admin', status: 'Active', city: 'City 19', country: 'Country 19', phone: '+1234567908', registered: '2025-11-19' },
-  { id: 20, name: 'User 20', email: 'user20@example.com', role: 'User', status: 'Inactive', city: 'City 20', country: 'Country 20', phone: '+1234567909', registered: '2025-11-20' },
-  { id: 21, name: 'User 21', email: 'user21@example.com', role: 'User', status: 'Active', city: 'City 21', country: 'Country 21', phone: '+1234567910', registered: '2025-11-21' },
-  { id: 22, name: 'User 22', email: 'user22@example.com', role: 'Admin', status: 'Active', city: 'City 22', country: 'Country 22', phone: '+1234567911', registered: '2025-11-22' },
-  { id: 23, name: 'User 23', email: 'user23@example.com', role: 'User', status: 'Inactive', city: 'City 23', country: 'Country 23', phone: '+1234567912', registered: '2025-11-23' },
-  { id: 24, name: 'User 24', email: 'user24@example.com', role: 'User', status: 'Active', city: 'City 24', country: 'Country 24', phone: '+1234567913', registered: '2025-11-24' },
-  { id: 25, name: 'User 25', email: 'user25@example.com', role: 'Admin', status: 'Active', city: 'City 25', country: 'Country 25', phone: '+1234567914', registered: '2025-11-25' },
-  { id: 26, name: 'User 26', email: 'user26@example.com', role: 'User', status: 'Inactive', city: 'City 26', country: 'Country 26', phone: '+1234567915', registered: '2025-11-26' },
-  { id: 27, name: 'User 27', email: 'user27@example.com', role: 'User', status: 'Active', city: 'City 27', country: 'Country 27', phone: '+1234567916', registered: '2025-11-27' },
-  { id: 28, name: 'User 28', email: 'user28@example.com', role: 'Admin', status: 'Active', city: 'City 28', country: 'Country 28', phone: '+1234567917', registered: '2025-11-28' },
-  { id: 29, name: 'User 29', email: 'user29@example.com', role: 'User', status: 'Inactive', city: 'City 29', country: 'Country 29', phone: '+1234567918', registered: '2025-11-1' },
-  { id: 30, name: 'User 30', email: 'user30@example.com', role: 'User', status: 'Active', city: 'City 30', country: 'Country 30', phone: '+1234567919', registered: '2025-11-2' },
-  { id: 31, name: 'User 31', email: 'user31@example.com', role: 'Admin', status: 'Active', city: 'City 31', country: 'Country 31', phone: '+1234567920', registered: '2025-11-3' },
-  { id: 32, name: 'User 32', email: 'user32@example.com', role: 'User', status: 'Inactive', city: 'City 32', country: 'Country 32', phone: '+1234567921', registered: '2025-11-4' },
-  { id: 33, name: 'User 33', email: 'user33@example.com', role: 'User', status: 'Active', city: 'City 33', country: 'Country 33', phone: '+1234567922', registered: '2025-11-5' },
-  { id: 34, name: 'User 34', email: 'user34@example.com', role: 'Admin', status: 'Active', city: 'City 34', country: 'Country 34', phone: '+1234567923', registered: '2025-11-6' },
-  { id: 35, name: 'User 35', email: 'user35@example.com', role: 'User', status: 'Inactive', city: 'City 35', country: 'Country 35', phone: '+1234567924', registered: '2025-11-7' },
-  { id: 36, name: 'User 36', email: 'user36@example.com', role: 'User', status: 'Active', city: 'City 36', country: 'Country 36', phone: '+1234567925', registered: '2025-11-8' },
-  { id: 37, name: 'User 37', email: 'user37@example.com', role: 'Admin', status: 'Active', city: 'City 37', country: 'Country 37', phone: '+1234567926', registered: '2025-11-9' },
-  { id: 38, name: 'User 38', email: 'user38@example.com', role: 'User', status: 'Inactive', city: 'City 38', country: 'Country 38', phone: '+1234567927', registered: '2025-11-10' },
-  { id: 39, name: 'User 39', email: 'user39@example.com', role: 'User', status: 'Active', city: 'City 39', country: 'Country 39', phone: '+1234567928', registered: '2025-11-11' },
-  { id: 40, name: 'User 40', email: 'user40@example.com', role: 'Admin', status: 'Active', city: 'City 40', country: 'Country 40', phone: '+1234567929', registered: '2025-11-12' },
-  { id: 41, name: 'User 41', email: 'user41@example.com', role: 'User', status: 'Inactive', city: 'City 41', country: 'Country 41', phone: '+1234567930', registered: '2025-11-13' },
-  { id: 42, name: 'User 42', email: 'user42@example.com', role: 'User', status: 'Active', city: 'City 42', country: 'Country 42', phone: '+1234567931', registered: '2025-11-14' },
-  { id: 43, name: 'User 43', email: 'user43@example.com', role: 'Admin', status: 'Active', city: 'City 43', country: 'Country 43', phone: '+1234567932', registered: '2025-11-15' },
-  { id: 44, name: 'User 44', email: 'user44@example.com', role: 'User', status: 'Inactive', city: 'City 44', country: 'Country 44', phone: '+1234567933', registered: '2025-11-16' },
-  { id: 45, name: 'User 45', email: 'user45@example.com', role: 'User', status: 'Active', city: 'City 45', country: 'Country 45', phone: '+1234567934', registered: '2025-11-17' },
-  { id: 46, name: 'User 46', email: 'user46@example.com', role: 'Admin', status: 'Active', city: 'City 46', country: 'Country 46', phone: '+1234567935', registered: '2025-11-18' },
-  { id: 47, name: 'User 47', email: 'user47@example.com', role: 'User', status: 'Inactive', city: 'City 47', country: 'Country 47', phone: '+1234567936', registered: '2025-11-19' },
-  { id: 48, name: 'User 48', email: 'user48@example.com', role: 'User', status: 'Active', city: 'City 48', country: 'Country 48', phone: '+1234567937', registered: '2025-11-20' },
-  { id: 49, name: 'User 49', email: 'user49@example.com', role: 'Admin', status: 'Active', city: 'City 49', country: 'Country 49', phone: '+1234567938', registered: '2025-11-21' },
-  { id: 50, name: 'User 50', email: 'user50@example.com', role: 'User', status: 'Inactive', city: 'City 50', country: 'Country 50', phone: '+1234567939', registered: '2025-11-22' }
-];
-
-// MOCK_REGISTRATIONS now points to the static API_DATA array
-const MOCK_REGISTRATIONS: Registration[] = API_DATA;
+const cityNames: Record<string, string> = {
+  "1": "Islamabad",
+  "2": "Lahore",
+  "3": "Karachi",
+};
 const ITEMS_PER_PAGE = 10; // Define how many items to show per page
 
 export default function QuizRegistration() {
+const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // State for current page
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isloader, setisloader] = useState(false);
+  const [emailError,setemailError]=useState("")
+
+  const openModal = () => {
+        setemailError("")
+        setIsOpen(true)
+};
+  const closeModal = () => setIsOpen(false);
+  const sendEmail = async () => {
+        setemailError("")
+     setisloader(true)
+      try {
+          const response = await axios.post("https://www.hsconsultants.net/api/admin/email-user");
+          setisloader(false);
+      } catch (err) {
+        setemailError("Something went wrong!!")
+        // setError("Failed to load registrations");
+      } finally {
+        setisloader(false);
+      }
+  }
+  
+  useEffect(() => {
+    const fetchRegistrations = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get("https://www.hsconsultants.net/api/admin/get-user");
+        setRegistrations(response.data.data);
+      } catch (err) {
+        setError("Failed to load registrations");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRegistrations();
+  }, []);
 
   // --- Search Logic (from previous step) ---
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,35 +71,36 @@ export default function QuizRegistration() {
     setCurrentPage(1); // Reset to first page whenever search query changes
   };
 
-  const filteredRegistrations = useMemo(() => {
-    if (!searchQuery) {
-      return MOCK_REGISTRATIONS;
-    }
+const filteredRegistrations = useMemo(() => {
+  if (!registrations || !Array.isArray(registrations)) return [];
+  if (!searchQuery) return registrations;
 
-    const lowerCaseQuery = searchQuery.toLowerCase();
+  const q = searchQuery.toLowerCase();
 
-    return MOCK_REGISTRATIONS.filter(registration => 
-        registration.name.toLowerCase().includes(lowerCaseQuery) ||
-        registration.email.toLowerCase().includes(lowerCaseQuery) ||
-        registration.city.toLowerCase().includes(lowerCaseQuery) ||
-        registration.country.toLowerCase().includes(lowerCaseQuery) ||
-        registration.role.toLowerCase().includes(lowerCaseQuery) ||
-        registration.status.toLowerCase().includes(lowerCaseQuery)
+  return registrations.filter(r => {
+    // Convert numeric city to readable name (if exists)
+    const readableCity = cityNames[r.city] || r.city;
+
+    return (
+      r.full_name.toLowerCase().includes(q) ||
+      r.email.toLowerCase().includes(q) ||
+      r.phone.toLowerCase().includes(q) ||
+      readableCity.toLowerCase().includes(q) || // ✅ now supports search by "Karachi", "Lahore", etc.
+      r.nic.toLowerCase().includes(q) ||
+      r.last_qualification.toLowerCase().includes(q) ||
+      r.institute.toLowerCase().includes(q)
     );
-  }, [searchQuery]);
-
-
-  // --- Pagination Logic ---
-  
-  // 1. Calculate total pages
-  const totalPages = Math.ceil(filteredRegistrations.length / ITEMS_PER_PAGE);
-
-  // 2. Determine slice start and end indices
+  });
+}, [searchQuery, registrations]);
+ 
+ const totalPages = Math.ceil(filteredRegistrations.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-
-  // 3. Get the data for the current page
   const paginatedRegistrations = filteredRegistrations.slice(startIndex, endIndex);
+if (loading)
+    return <div className="flex items-center justify-center h-screen text-white text-xl">Loading...</div>;
+  if (error)
+    return <div className="flex items-center justify-center h-screen text-red-500 text-xl">{error}</div>;
 
   // Pagination handlers
   const goToNextPage = () => {
@@ -177,73 +167,21 @@ export default function QuizRegistration() {
                                 type="text" 
                                 id="simple-search" 
                                 className="bg-black border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-black dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
-                                placeholder="Search Name, Email, City, or Role" 
+                                placeholder="Search here...." 
                                 value={searchQuery}
                                 onChange={handleSearchChange}
                             />
                         </div>
                     </form>
                 </div>
-                {/* ... (Actions/Filter Dropdowns remain unchanged) ... */}
                 <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0 ">
-                    <button type="button" className="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 border border-gray-100 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
-                        <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <button type="button"  onClick={openModal} className="flex items-center justify-center text-white bg-orange-500 hover:bg-primary-800 focus:ring-4 border border-black focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                        {/* <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-                        </svg>
-                        Add product
+                        </svg> */}
+                       Send Email
                     </button>
-                    {/* <div className="flex items-center space-x-3 w-full md:w-auto">
-                        <button id="actionsDropdownButton" data-dropdown-toggle="actionsDropdown" className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-black dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
-                            <svg className="-ml-1 mr-1.5 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path clipRule="evenodd" fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                            </svg>
-                            Actions
-                        </button>
-                        <div id="actionsDropdown" className="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-black dark:divide-gray-600">
-                            <ul className="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="actionsDropdownButton">
-                                <li>
-                                    <a href="#" className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mass Edit</a>
-                                </li>
-                            </ul>
-                            <div className="py-1">
-                                <a href="#" className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete all</a>
-                            </div>
-                        </div>
-                        <button id="filterDropdownButton" data-dropdown-toggle="filterDropdown" className="w-full md:w-auto flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700" type="button">
-                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="h-4 w-4 mr-2 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
-                            </svg>
-                            Filter
-                            <svg className="-mr-1 ml-1.5 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path clipRule="evenodd" fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                            </svg>
-                        </button>
-                        <div id="filterDropdown" className="z-10 hidden w-48 p-3 bg-white rounded-lg shadow dark:bg-black">
-                            <h6 className="mb-3 text-sm font-medium text-gray-900 dark:text-white">Choose brand</h6>
-                            <ul className="space-y-2 text-sm" aria-labelledby="filterDropdownButton">
-                                <li className="flex items-center">
-                                    <input id="apple" type="checkbox" value="" className="w-4 h-4 bg-black border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-black dark:border-gray-500" />
-                                    <label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Apple (56)</label>
-                                </li>
-                                <li className="flex items-center">
-                                    <input id="fitbit" type="checkbox" value="" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                                    <label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Microsoft (16)</label>
-                                </li>
-                                <li className="flex items-center">
-                                    <input id="razor" type="checkbox" value="" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                                    <label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Razor (49)</label>
-                                </li>
-                                <li className="flex items-center">
-                                    <input id="nikon" type="checkbox" value="" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                                    <label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">Nikon (12)</label>
-                                </li>
-                                <li className="flex items-center">
-                                    <input id="benq" type="checkbox" value="" className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-                                    <label className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">BenQ (74)</label>
-                                </li>
-                            </ul>
-                        </div>
-                    </div> */}
+                   
                 </div>
             </div>
 
@@ -251,48 +189,51 @@ export default function QuizRegistration() {
                 <table className="min-w-max text-sm text-left border-collapse w-full">
                     <thead className="bg-black sticky top-0 z-10">
                         <tr>
-                            <th className="px-6 py-3">ID</th>
-                            <th className="px-6 py-3">Name</th>
-                            <th className="px-6 py-3">Email</th>
-                            <th className="px-6 py-3">Role</th>
-                            <th className="px-6 py-3">Status</th>
-                            <th className="px-6 py-3">City</th>
-                            <th className="px-6 py-3">Country</th>
-                            <th className="px-6 py-3">Phone</th>
-                            <th className="px-6 py-3">Registered</th>
-                            <th className="px-6 py-3">Actions</th>
+                            <th className="px-4 py-3">ID</th>
+                            <th className="px-2 py-3">Full Name</th>
+                            <th className="px-2 py-3">Email</th>
+                            <th className="px-2 py-3">Phone</th>
+                            <th className="px-2 py-3">NIC</th>
+                            <th className="px-2 py-3">City</th>
+                            <th className="px-2 py-3">Qualification</th>
+                            <th className="px-2 py-3">Institute</th>
+                            <th className="px-2 py-3">Instagram</th>
+                            <th className="px-2 py-3">Registered</th>
                         </tr>
                     </thead>
 
                     <tbody className="divide-y divide-gray-700">
-                        {paginatedRegistrations.map((registration, i) => (
-                        <tr
-                            key={registration.id}
-                            className={`${
-                            i % 2 === 0 ? "bg-black" : "bg-gray-600"
-                            } hover:bg-gray-700`}
-                        >
-                            <td className="px-6 py-3">{registration.id}</td>
-                            <td className="px-6 py-3">{registration.name}</td>
-                            <td className="px-6 py-3">{registration.email}</td>
-                            <td className="px-6 py-3">{registration.role}</td>
-                            <td className="px-6 py-3">{registration.status}</td>
-                            <td className="px-6 py-3">{registration.city}</td>
-                            <td className="px-6 py-3">{registration.country}</td>
-                            <td className="px-6 py-3">{registration.phone}</td>
-                            <td className="px-6 py-3">{registration.registered}</td>
-                            <td className="px-6 py-3">Edit | Delete</td>
-                        </tr>
-                        ))}
-
-                        {/* Display message if no results found */}
-                        {filteredRegistrations.length === 0 && (
-                            <tr className="bg-black">
+                        {paginatedRegistrations.map((r, index) => (
+                            <tr key={r.u_id} className={`${index % 2 === 0 ? "bg-black" : "bg-gray-600"
+                            } hover:bg-gray-700`}>
+                                <td className="px-4 py-3">{r.u_id}</td>
+                                <td className="px-2 py-3">{r.full_name}</td>
+                                <td className="px-2 py-3">{r.email}</td>
+                                <td className="px-2 py-3">{r.phone}</td>
+                                <td className="px-2 py-3">{r.nic}</td>
+                                <td className="px-2 py-3">{r.city === '3'
+                                                            ? 'Karachi'
+                                                            : r.city === '2'
+                                                            ? 'Lahore'
+                                                            : r.city === '1'
+                                                            ? 'Islamabad'
+                                                            : r.city}
+                                </td>
+                                <td className="px-2 py-3">{r.last_qualification}</td>
+                                <td className="px-2 py-3">{r.institute}</td>
+                                <td className="px-2 py-3">{r.instagram_handle}</td>
+                                <td className="px-2 py-3">{new Date(r.created_at).toLocaleDateString()}</td>
+                            </tr>
+                            ))}
+                            {filteredRegistrations.length === 0 && (
+                            <tr>
+                                <tr className="bg-black">
                                 <td colSpan={10} className="px-6 py-4 text-center text-lg text-gray-400">
                                 No registrations found matching "{searchQuery}"
                                 </td>
                             </tr>
-                        )}
+                            </tr>
+                            )}
                     </tbody>
                 </table>
             </div>
@@ -385,7 +326,28 @@ export default function QuizRegistration() {
         {/* <div className="flex-shrink-0 mt-4 text-center text-gray-400 text-sm">
             Footer stays visible
         </div> */}
+     {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 relative text-black">
+            <h2 className="text-xl font-semibold mb-4">Email to all Users?</h2>
+            <p>By clicking on Sent button you will send "Quiz Link" to all registered users </p>
 
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+            <div className="m-4 text-center border rounded-lg border-white text-white flex justify-center"  >
+                <div className="bg-green-700 p-2 border rounded-lg border-white text-white flex ">
+                {isloader &&(<p className="w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin mt-2"></p>)}
+                <button className="p-2 " onClick={sendEmail} > Send Email to all Users</button>
+                </div>
+        </div>
+          <div className="text-center"> <p className="text-red-500 text-xs">{emailError}</p></div>
+          </div>
+        </div>
+      )}
         </div>
           </div>
     </>
